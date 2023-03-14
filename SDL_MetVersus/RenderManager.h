@@ -1,19 +1,28 @@
 #pragma once
 #include "STL_Components.h"
+#include "Constants.h"
 #include "SDL.h"
 
 class RenderManager
 {
 private:
+	RenderManager();
 	static RenderManager* instance;
 	map<String, SDL_Texture*> textureMap;
+	float mZoom;
 public:
+	
 	static RenderManager* GetInstance();
 	void RegisterTexture(String id, String filename);
 	void Draw();
-	void DrawFrame();
-	void DrawTile(String textureID, SDL_Rect* source, SDL_Rect* dest, double angle = 0, SDL_RendererFlip flip = SDL_FLIP_NONE);
-	void DropResource();
+	void DrawRectangle(SDL_Rect rectangle);
+	void DrawFrame
+	(String textureID, Sint32 x, Sint32 y, Sint32 width, Sint32 Height,
+		Uint32 row, Uint32 frame, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void DrawTile(String textureID, Sint32 x, Sint32 y, Uint32 column, Uint32 row,
+		double angle = 0, SDL_RendererFlip flip = SDL_FLIP_NONE, Uint32 tileSize = TILE_SIZE);
+	void DropResource(String id);
+	bool ValidateTexture(String id);
 	void Dispose();
 };
 

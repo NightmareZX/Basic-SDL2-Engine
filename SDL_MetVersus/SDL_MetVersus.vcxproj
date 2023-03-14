@@ -109,7 +109,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Owner\Documents\Visual Studio External Libraries\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Owner\source\repos\SDL_MetVersus\SDL_MetVersus\TinyXML;C:\Users\Owner\Documents\Visual Studio External Libraries\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -130,41 +130,60 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="BaseEntity.cpp" />
     <ClCompile Include="BaseGameObject.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CollisionHandler.cpp" />
     <ClCompile Include="DeltaTime.cpp" />
+    <ClCompile Include="EventHandler.cpp" />
     <ClCompile Include="FileHandler.cpp" />
     <ClCompile Include="GameLevel.cpp" />
+    <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MainEntryPoint.cpp" />
     <ClCompile Include="GameEngine.cpp" />
+    <ClCompile Include="MapParser.cpp" />
     <ClCompile Include="PlayerEntity.cpp" />
     <ClCompile Include="RenderManager.cpp" />
+    <ClCompile Include="TileLayer.cpp" />
     <ClCompile Include="TileObject.cpp" />
+    <ClCompile Include="TinyXML\tinystr.cpp" />
+    <ClCompile Include="TinyXML\tinyxml.cpp" />
+    <ClCompile Include="TinyXML\tinyxmlerror.cpp" />
+    <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
     <ClCompile Include="Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="BaseEntity.h" />
     <ClInclude Include="BaseGameObject.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="CollisionHandler.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="DeltaTime.h" />
+    <ClInclude Include="EventHandler.h" />
     <ClInclude Include="FileHandler.h" />
     <ClInclude Include="GameLevel.h" />
+    <ClInclude Include="IGameObject.h" />
+    <ClInclude Include="Layer.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="MapParser.h" />
     <ClInclude Include="PlayerEntity.h" />
     <ClInclude Include="RenderManager.h" />
+    <ClInclude Include="RigidBody.h" />
     <ClInclude Include="STL_Components.h" />
     <ClInclude Include="GameEngine.h" />
+    <ClInclude Include="TileLayer.h" />
     <ClInclude Include="TileObject.h" />
+    <ClInclude Include="TinyXML\tinystr.h" />
+    <ClInclude Include="TinyXML\tinyxml.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Vector2D.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\..\..\..\Documents\Custom Game Assets\MetVersus\Collission\left_slope_tile.png" />
-    <Image Include="..\..\..\..\Documents\Custom Game Assets\MetVersus\Collission\right_slope_tile.png" />
-    <Image Include="..\..\..\..\Documents\Custom Game Assets\MetVersus\Collission\solid_tile.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -27,8 +27,8 @@ void Camera::Update()
 		return;
 	}
 
-	viewBox.x = target->GetCentrePoint().X - (WINDOW_WIDTH * 0.5);
-	viewBox.y = target->GetCentrePoint().Y - (WINDOW_HEIGHT * 0.5);
+	viewBox.x = target->GetCentrePoint().X - (WINDOW_WIDTH / 2);
+	viewBox.y = target->GetCentrePoint().Y - (WINDOW_HEIGHT / 2);
 
 	if (viewBox.x < 0) viewBox.x = 0;
 	if (viewBox.y < 0) viewBox.y = 0;

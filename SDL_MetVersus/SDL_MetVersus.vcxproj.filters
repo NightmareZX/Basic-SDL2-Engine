@@ -19,12 +19,6 @@
     <Filter Include="Source Files\MainGame">
       <UniqueIdentifier>{44c9390e-2215-4e05-bacd-cb482b130b13}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\MainGame\GameEntities">
-      <UniqueIdentifier>{45eac6dd-cd66-446d-8750-a0acd7f926f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\MainGame\GameEntities">
-      <UniqueIdentifier>{d4925bcc-ae5c-4535-ac8e-a21838ef7223}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\MainGame\GameLevel">
       <UniqueIdentifier>{1f83d974-c084-4ef4-9ea8-5ffebe07bb3f}</UniqueIdentifier>
     </Filter>
@@ -37,22 +31,25 @@
     <Filter Include="Source Files\MainGame\FileHandler">
       <UniqueIdentifier>{40bc2b05-58e1-4976-96f8-01ce7244bf55}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TinyXML">
+      <UniqueIdentifier>{519ff7cd-2143-459b-91a3-cdf8e02f9adb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\MainGame\GameObjects">
+      <UniqueIdentifier>{45eac6dd-cd66-446d-8750-a0acd7f926f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\MainGame\GameObjects">
+      <UniqueIdentifier>{d4925bcc-ae5c-4535-ac8e-a21838ef7223}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainEntryPoint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MainGame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameLevel.cpp">
       <Filter>Source Files\MainGame\GameLevel</Filter>
     </ClCompile>
     <ClCompile Include="BaseEntity.cpp">
-      <Filter>Source Files\MainGame\GameEntities</Filter>
+      <Filter>Source Files\MainGame\GameObjects</Filter>
     </ClCompile>
     <ClCompile Include="TileObject.cpp">
       <Filter>Source Files\MainGame\GameLevel</Filter>
@@ -63,14 +60,59 @@
     <ClCompile Include="BaseGameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\MainGame</Filter>
+    </ClCompile>
+    <ClCompile Include="DeltaTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngine.cpp">
+      <Filter>Source Files\MainGame</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerEntity.cpp">
+      <Filter>Source Files\MainGame\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderManager.cpp">
+      <Filter>Source Files\MainGame</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector2D.cpp">
+      <Filter>Source Files\MainGame</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinystr.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxml.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlerror.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlparser.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="Layer.cpp">
+      <Filter>Source Files\MainGame\GameLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="TileLayer.cpp">
+      <Filter>Source Files\MainGame\GameLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="MapParser.cpp">
+      <Filter>Source Files\MainGame\GameLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EventHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MainGame.h">
-      <Filter>Header Files\MainGame</Filter>
-    </ClInclude>
-    <ClInclude Include="GameBuilder.h">
-      <Filter>Header Files\MainGame</Filter>
-    </ClInclude>
     <ClInclude Include="STL_Components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -81,7 +123,7 @@
       <Filter>Header Files\MainGame\GameLevel</Filter>
     </ClInclude>
     <ClInclude Include="BaseEntity.h">
-      <Filter>Header Files\MainGame\GameEntities</Filter>
+      <Filter>Header Files\MainGame\GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="TileObject.h">
       <Filter>Header Files\MainGame\GameLevel</Filter>
@@ -89,7 +131,64 @@
     <ClInclude Include="FileHandler.h">
       <Filter>Header Files\MainGame\FileHandler</Filter>
     </ClInclude>
+    <ClInclude Include="Vector2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\MainGame</Filter>
+    </ClInclude>
+    <ClInclude Include="DeltaTime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngine.h">
+      <Filter>Header Files\MainGame</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerEntity.h">
+      <Filter>Header Files\MainGame\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderManager.h">
+      <Filter>Header Files\MainGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyXML\tinystr.h">
+      <Filter>TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyXML\tinyxml.h">
+      <Filter>TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="TileLayer.h">
+      <Filter>Header Files\MainGame\GameLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>Header Files\MainGame\GameLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="MapParser.h">
+      <Filter>Header Files\MainGame\GameLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="IGameObject.h">
+      <Filter>Header Files\MainGame\GameObjects</Filter>
+    </ClInclude>
     <ClInclude Include="BaseGameObject.h">
+      <Filter>Header Files\MainGame\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Header Files\MainGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>Header Files\MainGame</Filter>
+    </ClInclude>
+    <ClInclude Include="EventHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

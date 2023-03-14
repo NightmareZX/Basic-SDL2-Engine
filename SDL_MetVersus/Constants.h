@@ -5,8 +5,10 @@
 constexpr int WINDOW_WIDTH = 600;
 constexpr int WINDOW_HEIGHT = 400;
 
-constexpr int MAX_X_VELOCITY = 4;
-constexpr int MAX_Y_VELOCITY = 4;
+constexpr int MAX_X_VELOCITY = 40;
+constexpr int MAX_Y_VELOCITY = 10;
+
+constexpr float X_VELOCITY_DECAY = 0.5;
 
 //===============================================================
 //						Tile Constants

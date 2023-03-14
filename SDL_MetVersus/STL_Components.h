@@ -21,12 +21,17 @@
 //For storing things
 #include <map>
 
+//String streams
+#include <sstream>
+
+#include <cmath>
+
 //standard library c++ string
-typedef std::string String;
+using String = std::string;
 
 //
-typedef std::ofstream WriteFileStream;
-typedef std::ifstream ReadFileStream;
+using WriteFileStream = std::ofstream;
+using ReadFileStream = std::ifstream;
 
 using std::ios;
 
@@ -37,3 +42,10 @@ using std::map;
 
 using std::pair;
 
+using std::getline;
+using std::to_string;
+
+using InputStringStream = std::istringstream;
+using OutputStringStream = std::ostringstream;
+
+using StringStream = std::stringstream;

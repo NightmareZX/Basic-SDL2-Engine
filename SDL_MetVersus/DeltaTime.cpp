@@ -1,13 +1,20 @@
 #include "DeltaTime.h"
+#include "Logger.h"
 
-void updateDeltaTime()
+
+GlobalTimer* GlobalTimer::sInstance = nullptr;
+float GlobalTimer::mTimeDelta = 0.0f;
+float GlobalTimer::mLastTime = 0.0f;
+
+void GlobalTimer::Tick()
 {
-    static Uint64 lastFrameTime = SDL_GetPerformanceCounter();
-    Uint64 currentFrameTime = SDL_GetPerformanceCounter();
-    Uint64 frameTimeDiff = currentFrameTime - lastFrameTime;
-    lastFrameTime = currentFrameTime;
+	mTimeDelta = (SDL_GetTicks() - mLastTime)*(FPS_TARGET / 1000.0f);
+	SDL_GetPerformanceCounter();
+	SDL_GetPerformanceFrequency();
 
-    static double frequency = (double)SDL_GetPerformanceFrequency() / 1000.0;
+	if (mTimeDelta > MAX_DELTA)
+		mTimeDelta = MAX_DELTA;
 
-    deltaTime = (float)(frameTimeDiff / frequency);
+	mLastTime = SDL_GetTicks();
+	//Logger::GetInstance()->Log("Current Time Delta: " + to_string(mTimeDelta));
 }

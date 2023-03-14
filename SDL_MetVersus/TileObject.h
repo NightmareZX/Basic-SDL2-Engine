@@ -5,7 +5,7 @@
 #include "Constants.h"
 #include "BaseGameObject.h"
 
-class TileObject : public BaseGameObject
+class TileObject
 {
 protected:
 	SDL_Rect source;

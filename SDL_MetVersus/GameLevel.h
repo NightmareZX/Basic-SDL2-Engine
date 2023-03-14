@@ -5,26 +5,31 @@
 #include "TileObject.h"
 #include "FileHandler.h"
 #include "RenderManager.h"
+#include "TileLayer.h"
+#include "CollisionHandler.h"
+#include "PlayerEntity.h"
 
-
+using LayerList = vector<Layer*>;
 class GameLevel
 {
 private:
-	//Tile object array that will hold the collision map
-	CollisionTile*** collisionMap;
 	Uint32 height;//Rows of the collisionMap
 	Uint32 width;//Columns of the collisionMap 
+	LayerList layers;
+
+	PlayerEntity* player;
+	TileLayer* collisionLayer;
 public:
 	GameLevel();
 	~GameLevel();
-	void LoadMap(String levelFileName);
-
 	void DrawMap();
-
+	void Update();
 	void DisposeMap();
+	inline void SetCollisionLayer(TileLayer* collisionLayer) { this->collisionLayer = collisionLayer; }
+	inline Layer* GetCollisionLayer() { return collisionLayer; }
 private:
-	CollisionTile* CreateCollisionTile(TileTypes type, Uint32 tilePosX, Uint32 tilePosY);
-
-	String getTextureTEMP(TileTypes type);
+	friend class MapParser;
+	friend class CollisionHandler;
+	void AddLayer(Layer* layer);
 };
 

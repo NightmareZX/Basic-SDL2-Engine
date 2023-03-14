@@ -5,6 +5,9 @@
 #include "GameLevel.h"
 #include "DeltaTime.h"
 #include "RenderManager.h"
+#include "MapParser.h"
+#include "Logger.h"
+#include "EventHandler.h"
 
 class GameEngine
 {
@@ -15,7 +18,7 @@ private:
 	
 	bool b_RunningStatus;
 
-	GameLevel* currentLevel;
+	GameLevel* mCurrentLevel;
 	static GameEngine* instance;
 
 public:
@@ -23,16 +26,19 @@ public:
 
 	void GameLoop();
 	
-
+	void QuitEngine();
 	static GameEngine* GetInstance();
+	GameLevel* GetCurrentMap() { return mCurrentLevel; }
 	inline SDL_Renderer* GetRenderer() { return mainRenderer; }
 private:
 	GameEngine();
-	void StartUp();
+	void InitialiseComponents();
 
-	void handleEvents();
+	
+
 	void update();
 	void render();
+
 	void DisposeComponents();
 
 	bool isRunning();
