@@ -4,15 +4,24 @@
 const Uint32 FPS_TARGET = 60;
 const float MAX_DELTA = 1.5f;
 
+constexpr float FIXED_TIME_STEP = 1.0f / 60.0f;
+
 class GlobalTimer
 {
 private:
-	GlobalTimer(){}
+	GlobalTimer();
 	static GlobalTimer* sInstance;
-	static float mTimeDelta;
-	static float mLastTime;
+	float mTimeDelta;
+	
+
+	Uint32 mLastTime32;
+	float mLastTimeF;
+	float mAccumulator;
 public:
 	void Tick();
+	void TickFixedStep();
 	inline float GetTimeDelta() { return mTimeDelta; }
+	inline float* GetAccumulator() { return &mAccumulator; }
+
 	inline static GlobalTimer* GetInstance() { if (sInstance == nullptr) sInstance = new GlobalTimer(); return sInstance; }
 };

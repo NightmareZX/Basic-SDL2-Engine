@@ -11,6 +11,8 @@ public:
 	Transform(float x, float y) : X(x), Y(y) {}
 	inline void TranslateX(float x) { X += x; }
 	inline void TranslateY(float y) { Y += y; }
+	inline void RoundDownX() { X = floor(X); }
+	inline void RoundDownY() { Y = floor(Y); }
 	inline void Translate(Vector2D vector) { X += vector.X; Y += vector.Y; }
 private:
 

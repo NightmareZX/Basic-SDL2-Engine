@@ -51,9 +51,6 @@
     <ClCompile Include="BaseEntity.cpp">
       <Filter>Source Files\MainGame\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="TileObject.cpp">
-      <Filter>Source Files\MainGame\GameLevel</Filter>
-    </ClCompile>
     <ClCompile Include="FileHandler.cpp">
       <Filter>Source Files\MainGame\FileHandler</Filter>
     </ClCompile>
@@ -63,7 +60,7 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\MainGame</Filter>
     </ClCompile>
-    <ClCompile Include="DeltaTime.cpp">
+    <ClCompile Include="GlobalTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameEngine.cpp">
@@ -111,6 +108,15 @@
     <ClCompile Include="EventHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IniFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="STL_Components.h">
@@ -125,9 +131,6 @@
     <ClInclude Include="BaseEntity.h">
       <Filter>Header Files\MainGame\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="TileObject.h">
-      <Filter>Header Files\MainGame\GameLevel</Filter>
-    </ClInclude>
     <ClInclude Include="FileHandler.h">
       <Filter>Header Files\MainGame\FileHandler</Filter>
     </ClInclude>
@@ -137,7 +140,7 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files\MainGame</Filter>
     </ClInclude>
-    <ClInclude Include="DeltaTime.h">
+    <ClInclude Include="GlobalTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameEngine.h">
@@ -189,6 +192,15 @@
       <Filter>Header Files\MainGame</Filter>
     </ClInclude>
     <ClInclude Include="EventHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IniFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

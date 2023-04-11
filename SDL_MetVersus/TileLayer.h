@@ -5,6 +5,26 @@
 #include "Layer.h"
 #include "RenderManager.h"
 
+//===============================================================
+//						Tile Constants
+//===============================================================
+//The tile size that the game will use
+
+enum TileTypes : Uint8
+{
+	AIR = 0,//Typical air tile where the player can move trough no problem
+	SOLID = 1,//Activly stops most objects including the player from going inside it
+	LEFT_SLOPE = 2,
+	RIGHT_SLOPE = 3,
+	CEILING_LEFT_SLOPE = 4,
+	CEILING_RIGHT_SLOPE = 5,
+
+	OUT_OF_BOUNDS = 0xDF,
+	NONE = 0xEF,
+	UNKNOWN = 0xFF
+};
+
+
 //A structure that holds data about a tileset
 struct TileSet
 {
@@ -31,22 +51,20 @@ using TileMap = vector<vector<Uint32>>;
 class TileLayer : public Layer
 {
 private:
-	Uint32 rowCount;
-	Uint32 columnCount;
+	Uint32 mHeight;
+	Uint32 mWidth;
 
-	TileMap tilemap;
-	TileSetList tileSetList;
+	TileMap mTilemap;
+	TileSetList mTileSetList;
 
-	ValidLayers layerType;
+	ValidLayers mLayerType;
 public:
-	TileLayer(Uint32 rowCount, Uint32 columnCount, TileMap tilemap, TileSetList tilesets, ValidLayers type):
-		rowCount(rowCount), columnCount(columnCount), tilemap(tilemap), tileSetList(tilesets), layerType(type){}
+	TileLayer(Uint32 height, Uint32 width, TileMap tilemap, TileSetList tilesets, ValidLayers type):
+		mHeight(height), mWidth(width), mTilemap(tilemap), mTileSetList(tilesets), mLayerType(type){}
 	virtual void Render();
 	virtual void Update();
-	inline TileMap GetTileMap() { return tilemap; }
-	inline Uint32 GetRowCount() { return rowCount; }
-	inline Uint32 GetColumnCount() { return columnCount; }
-	inline ValidLayers GetLayerType() { return layerType; }
+	inline TileMap GetTileMap() { return mTilemap; }
+	inline Uint32 GetRowCount() { return mHeight; }
+	inline Uint32 GetColumnCount() { return mWidth; }
+	inline ValidLayers GetLayerType() { return mLayerType; }
 };
-
-const Uint32 LEFT_SLOPE_HEIGHTS[16] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 };

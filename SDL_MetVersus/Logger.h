@@ -1,6 +1,8 @@
 #pragma once
 #include "STL_Components.h"
 #include "SDL.h"
+
+//A logger class that can be used to log information to the console for debugging and error checking purposes
 class Logger
 {
 private:

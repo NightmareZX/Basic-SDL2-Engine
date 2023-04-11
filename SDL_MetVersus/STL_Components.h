@@ -26,6 +26,12 @@
 
 #include <cmath>
 
+#include <iomanip>
+
+#include <unordered_map>
+
+#include <algorithm>
+
 //standard library c++ string
 using String = std::string;
 
@@ -39,6 +45,7 @@ using std::ios;
 using std::vector;
 
 using std::map;
+using std::unordered_map;
 
 using std::pair;
 
@@ -49,3 +56,6 @@ using InputStringStream = std::istringstream;
 using OutputStringStream = std::ostringstream;
 
 using StringStream = std::stringstream;
+
+using std::fixed;
+using std::setprecision;

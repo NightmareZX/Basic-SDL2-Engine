@@ -39,7 +39,8 @@ public:
 	{
 		mTransform = new Transform(props->X, props->Y);
 	}
-	virtual void Update() = 0;
+	virtual void Update(float timeDelta) = 0;
 	virtual void Draw() = 0;
 	virtual void Dispose() = 0;
+	inline Transform* GetTransform() { return mTransform; }
 };

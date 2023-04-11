@@ -3,44 +3,39 @@
 #include "SDL.h"
 #include "Constants.h"
 #include "GameLevel.h"
-#include "DeltaTime.h"
 #include "RenderManager.h"
 #include "MapParser.h"
 #include "Logger.h"
 #include "EventHandler.h"
+#include "CollisionHandler.h"
 
 class GameEngine
 {
 private:
 
-	SDL_Window* mainWindow;
-	SDL_Renderer* mainRenderer;
+	SDL_Window* mMainWindow;
+	SDL_Renderer* mMainRenderer;
 	
-	bool b_RunningStatus;
+	bool mRunningStatus;
 
 	GameLevel* mCurrentLevel;
-	static GameEngine* instance;
+	static GameEngine* mInstance;
 
 public:
 	~GameEngine();
-
 	void GameLoop();
-	
-	void QuitEngine();
-	static GameEngine* GetInstance();
-	GameLevel* GetCurrentMap() { return mCurrentLevel; }
-	inline SDL_Renderer* GetRenderer() { return mainRenderer; }
+
+	inline void QuitEngine() { mRunningStatus = false; }
+	inline static GameEngine* GetInstance() { if (mInstance == nullptr) mInstance = new GameEngine(); return mInstance; }
+	inline GameLevel* GetCurrentMap() { return mCurrentLevel; }
+	inline SDL_Renderer* GetRenderer() { return mMainRenderer; }
+	inline SDL_Window* GetWindow() { return mMainWindow; }
 private:
 	GameEngine();
 	void InitialiseComponents();
-
-	
-
-	void update();
-	void render();
-
+	void EngineUpdate();
+	void EngineRender();
 	void DisposeComponents();
-
 	bool isRunning();
 };
 

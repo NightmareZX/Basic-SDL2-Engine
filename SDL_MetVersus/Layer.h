@@ -6,6 +6,7 @@ enum ValidLayers
 	COLLISION,
 	FOREGROUND,
 	//Semi Vital
+	MIDDLEGROUND,
 	BACKGROUND,
 	//Optional
 	PARALAX1,

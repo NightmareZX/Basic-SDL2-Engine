@@ -9,6 +9,8 @@ EventHandler::EventHandler()
 	mKeyBindings[MOVE_RIGHT] = SDL_Scancode::SDL_SCANCODE_RIGHT;
 	mKeyBindings[JUMP] = SDL_Scancode::SDL_SCANCODE_A;
 	mKeyBindings[DOWN] = SDL_Scancode::SDL_SCANCODE_DOWN;
+	mKeyBindings[DEBUG_LOG_SDL_ERROR] = SDL_Scancode::SDL_SCANCODE_P;
+	mKeyBindings[DEBUG_RESTART_MUSIC] = SDL_Scancode::SDL_SCANCODE_K;
 }
 
 void EventHandler::ListenForEvents()
@@ -20,6 +22,7 @@ void EventHandler::ListenForEvents()
 	case SDL_EventType::SDL_QUIT: GameEngine::GetInstance()->QuitEngine(); break;
 	case SDL_EventType::SDL_KEYDOWN: KeyPressed(); break;
 	case SDL_EventType::SDL_KEYUP: KeyReleased(); break;
+	case SDL_EventType::SDL_WINDOWEVENT: WindowEvent(event); break;
 	default:
 		break;
 	}
@@ -31,6 +34,12 @@ bool EventHandler::GetAction(RegisteredAction action)
 		return true;
 	return false;
 }
-
+void EventHandler::WindowEvent(SDL_Event event)
+{
+	if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+	{
+		RenderManager::GetInstance()->SetWindowDimensions(event.window.data1, event.window.data2);
+	}
+}
 void EventHandler::KeyPressed(){ mKeyStates = SDL_GetKeyboardState(nullptr);}
 void EventHandler::KeyReleased(){ mKeyStates = SDL_GetKeyboardState(nullptr); }

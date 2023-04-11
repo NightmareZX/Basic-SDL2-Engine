@@ -18,6 +18,9 @@ enum RegisteredAction
 	PAUSE,
 	MENU_ACCEPT,
 	MENU_CANCEL,
+
+	DEBUG_LOG_SDL_ERROR,
+	DEBUG_RESTART_MUSIC
 };
 
 class EventHandler
@@ -32,6 +35,7 @@ public:
 	void ListenForEvents();
 	void KeyPressed();
 	void KeyReleased();
+	void WindowEvent(SDL_Event event);
 	bool GetAction(RegisteredAction action);
 };
 

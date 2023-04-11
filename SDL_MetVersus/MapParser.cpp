@@ -61,16 +61,15 @@ bool MapParser::Parse(String id, String source)
 		}
 	}
 	GameLevel* map = new GameLevel();
+	map->SetLevelHeight(rowCount);
+	map->SetLevelWidth(columnCount);
 	for (TiXmlElement* element = root->FirstChildElement(); element != nullptr; element = element->NextSiblingElement())
 	{
 		//when we found the tile set, add it to the tile set list
 		if (element->Value() == String("layer"))
 		{
 			TileLayer* layer = ParseTileLayer(element, tilesets, rowCount, columnCount);
-			if (layer->GetLayerType() == ValidLayers::COLLISION)
-				map->SetCollisionLayer(layer);
-			else
-				map->AddLayer(layer);
+			map->AddLayer(layer, layer->GetLayerType());
 		}
 	}
 	loadedMap = map;
@@ -128,6 +127,8 @@ TileLayer* MapParser::ParseTileLayer(TiXmlElement* xmlLayer, TileSetList tileset
 		tilesets.clear();
 	}
 	else if (layerName == "foreground") layerType = ValidLayers::FOREGROUND;
+	else if (layerName == "middleground") layerType = ValidLayers::MIDDLEGROUND;
+	else if (layerName == "background") layerType = ValidLayers::BACKGROUND;
 
 	if (layerType == ValidLayers::NONEVALID)
 	{
@@ -163,6 +164,7 @@ TileLayer* MapParser::ParseTileLayer(TiXmlElement* xmlLayer, TileSetList tileset
 		{
 			getline(iss, id, ',');
 			StringStream convertor(id);
+			//Uint32 tileData = 0;
 			convertor >> tilemap[row][column];
 
 			//if the stream is bad for whatever reason then just end the loop
@@ -181,8 +183,4 @@ TileLayer* MapParser::ParseTileLayer(TiXmlElement* xmlLayer, TileSetList tileset
 		}
 	}
 	return new TileLayer(rowCount, columnCount, tilemap, tilesets, layerType);
-}
-CollisionTile*** MapParser::ParseCollisonMap(TiXmlElement* xmlTileset)
-{
-	return nullptr;
 }
