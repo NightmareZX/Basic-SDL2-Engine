@@ -45,7 +45,7 @@
     <ClCompile Include="MainEntryPoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameLevel.cpp">
+    <ClCompile Include="Room.cpp">
       <Filter>Source Files\MainGame\GameLevel</Filter>
     </ClCompile>
     <ClCompile Include="BaseEntity.cpp">
@@ -93,7 +93,7 @@
     <ClCompile Include="TileLayer.cpp">
       <Filter>Source Files\MainGame\GameLevel</Filter>
     </ClCompile>
-    <ClCompile Include="MapParser.cpp">
+    <ClCompile Include="MapManager.cpp">
       <Filter>Source Files\MainGame\GameLevel</Filter>
     </ClCompile>
     <ClCompile Include="Logger.cpp">
@@ -117,6 +117,9 @@
     <ClCompile Include="AudioManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameRules.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="STL_Components.h">
@@ -125,7 +128,7 @@
     <ClInclude Include="Constants.h">
       <Filter>Header Files\MainGame</Filter>
     </ClInclude>
-    <ClInclude Include="GameLevel.h">
+    <ClInclude Include="Room.h">
       <Filter>Header Files\MainGame\GameLevel</Filter>
     </ClInclude>
     <ClInclude Include="BaseEntity.h">
@@ -167,7 +170,7 @@
     <ClInclude Include="Layer.h">
       <Filter>Header Files\MainGame\GameLevel</Filter>
     </ClInclude>
-    <ClInclude Include="MapParser.h">
+    <ClInclude Include="MapManager.h">
       <Filter>Header Files\MainGame\GameLevel</Filter>
     </ClInclude>
     <ClInclude Include="IGameObject.h">
@@ -201,6 +204,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AudioManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameRules.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

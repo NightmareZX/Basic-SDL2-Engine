@@ -4,6 +4,7 @@
 #include "AnimationManager.h"
 #include "GlobalTimer.h"
 #include "AudioManager.h"
+#include "GameRules.h"
 
 GameEngine* GameEngine::mInstance = nullptr;
 
@@ -31,6 +32,7 @@ GameEngine::GameEngine()
 		}
 		else mRunningStatus = false;
 	}
+	mFrameAdvanceMode = false;
 
 	mCurrentLevel = nullptr;
 	RenderManager::GetInstance()->SetWindowDimensions(width, height);
@@ -42,16 +44,18 @@ GameEngine::~GameEngine()
 void GameEngine::InitialiseComponents()
 {
 	TTF_Init();
+	//Initialise singleton instances
 	Logger::GetInstance()->ToggleLogger();
 	GlobalTimer::GetInstance();
 	EventHandler::GetInstance();
 	AudioManager::GetInstance();
 	Camera::GetInstance();
 	AnimationManager::GetInstance();
+	GameRules::GetInstance();
 	//Test initialisations
 	RenderManager::GetInstance()->RegisterFont("arial.ttf", "arial.ttf", 24);
-	MapParser::GetInstance()->LoadMap("testmap");
-	mCurrentLevel = MapParser::GetInstance()->GetMap();
+	mCurrentLevel = MapManager::GetInstance()->DebugLoadLevel("TestWordLDtk\\test","Room_0");
+	//mCurrentLevel = MapManager::GetInstance()->GetMap();
 	AudioManager::GetInstance()->RegisterMusic("music_test", MUS_OGG);
 	AudioManager::GetInstance()->SetChannelVolume(CHAN_MUSIC, 5);
 }
@@ -59,24 +63,44 @@ void GameEngine::InitialiseComponents()
 void GameEngine::GameLoop()
 {
 	InitialiseComponents();
-	AudioManager::GetInstance()->PlayMusic("music_test", false, true, 0, 5000);
+	//AudioManager::GetInstance()->PlayMusic("music_test", false, true, 0, 5000);
 	while (mRunningStatus)
 	{
 		GlobalTimer::GetInstance()->TickFixedStep();
 		EventHandler::GetInstance()->ListenForEvents();
 
-		//==========================================================================
-		//							Fixed Time Step Update
-		//==========================================================================
-		//We use fixed time step to update game logic for easier consistency because
-		//variable time step would be too annoying to make work properly
-		float* accumulator = GlobalTimer::GetInstance()->GetAccumulator();
-		while (*accumulator >= FIXED_TIME_STEP)
+		if (EventHandler::GetInstance()->GetActionOnce(DEBUG_ENABLE_FRAME_ADVANCE))
 		{
-			EngineUpdate();
-			EngineRender();
-			*accumulator -= FIXED_TIME_STEP;
+			mFrameAdvanceMode = !mFrameAdvanceMode;
+			float* accumulator = GlobalTimer::GetInstance()->GetAccumulator();
+			*accumulator = 0.0f;
 		}
+			
+		if (mFrameAdvanceMode)
+		{
+			if (EventHandler::GetInstance()->GetActionOnce(DEBUG_ADVANCE_FRAME))
+			{
+				EngineUpdate();
+				EngineRender();
+			}
+		}
+		else
+		{
+			//==========================================================================
+			//							Fixed Time Step Update
+			//==========================================================================
+			//We use fixed time step to update game logic for easier consistency because
+			//variable time step would be too annoying to make work properly
+			float* accumulator = GlobalTimer::GetInstance()->GetAccumulator();
+			while (*accumulator >= FIXED_TIME_STEP)
+			{
+				EngineUpdate();
+				EngineRender();
+				*accumulator -= FIXED_TIME_STEP;
+			}
+		}
+
+
 		//GlobalTimer::GetInstance()->Tick();
 	}
 	DisposeComponents();

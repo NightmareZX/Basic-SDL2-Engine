@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="Plr_StartDBG">
+  <properties>
+   <property name="StartFromPlayerOrigin" type="bool" value="false"/>
+  </properties>
+  <point/>
+ </object>
+</template>

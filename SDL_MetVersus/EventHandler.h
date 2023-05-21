@@ -20,15 +20,18 @@ enum RegisteredAction
 	MENU_CANCEL,
 
 	DEBUG_LOG_SDL_ERROR,
-	DEBUG_RESTART_MUSIC
+	DEBUG_RESTART_MUSIC,
+	DEBUG_ENABLE_FRAME_ADVANCE,
+	DEBUG_ADVANCE_FRAME,
 };
 
-class EventHandler
+class EventHandler final
 {
 private:
 	EventHandler();
 	static EventHandler* sInstance;
 	const Uint8* mKeyStates;
+	Uint8* mLastKeyStates;
 	map<RegisteredAction, SDL_Scancode> mKeyBindings;
 public:
 	inline static EventHandler* GetInstance() { if (sInstance == nullptr) sInstance = new EventHandler(); return sInstance; }
@@ -37,5 +40,6 @@ public:
 	void KeyReleased();
 	void WindowEvent(SDL_Event event);
 	bool GetAction(RegisteredAction action);
+	bool GetActionOnce(RegisteredAction action);
 };
 

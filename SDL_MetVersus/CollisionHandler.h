@@ -17,7 +17,7 @@ private:
 	CollisionHandler(){}
 	static CollisionHandler* instance;
 	String statusCol;
-	Sint32 HandleSlopeCollision(BaseEntity* entity, TileData slopeTile);
+	Sint32 HandleSlopeCollision(BaseEntity* entity, TileData slopeTile, bool goingRight = false);
 	void WalkDownFloorSlope(BaseEntity* entity);
 	const Uint8* GetSlopesHeightArray(TileTypes slopeType);
 	Sint32 GetSlopeYDifference(TileData slopeTile, Sint32 x, Sint32 y);

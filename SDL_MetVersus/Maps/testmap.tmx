@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="64" height="48" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="64" height="48" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="5">
  <tileset firstgid="1" name="collision" tilewidth="16" tileheight="16" tilecount="32" columns="16">
   <image source="../collission_tileset.png" width="256" height="32"/>
  </tileset>
@@ -162,4 +162,8 @@
 35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35
 </data>
  </layer>
+ <objectgroup id="5" name="objects">
+  <object id="2" template="Templates/Plr_StartDBG.tx" x="344.667" y="109.333"/>
+  <object id="4" template="Templates/untitled.tx" x="187.333" y="55.3333" width="35.3333" height="105.333"/>
+ </objectgroup>
 </map>

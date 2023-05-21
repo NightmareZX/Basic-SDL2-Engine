@@ -14,9 +14,9 @@ AudioManager::AudioManager()
 	//1 is mono, 2 is stereo
 	constexpr Sint32 CHANNEL_TYPE = 2;
 	constexpr Sint32 CHUNK_SIZE = 1024;
-	int a = Mix_OpenAudio(FREQUENCY ,FORMAT , CHANNEL_TYPE,CHUNK_SIZE);
+	Mix_OpenAudio(FREQUENCY ,FORMAT , CHANNEL_TYPE,CHUNK_SIZE);
 	
-	int b = Mix_AllocateChannels(16);
+	Mix_AllocateChannels(16);
 	InitialiseChannels();
 
 	mFadeInNextMusic = false;
@@ -253,8 +253,7 @@ void AudioManager::SetChannelVolume(GameAudioChannels channel, Uint32 volumePerc
 	//if the volume percent is higher than 100, then just set it to 100, otherwise dont change it
 	volumePercent = (volumePercent > 100) ? 100: volumePercent;
 
-	constexpr float MIX_VOLUME_MAX = 128.0f;
-	Sint32 volumeAdjusted = static_cast<Sint32>(MIX_VOLUME_MAX * (static_cast<float>(volumePercent) / 100.0f));
+	Sint32 volumeAdjusted = static_cast<Sint32>(static_cast<float>(MIX_MAX_VOLUME) * (static_cast<float>(volumePercent) / 100.0f));
 	switch (channel)
 	{
 	case CHAN_MUSIC:

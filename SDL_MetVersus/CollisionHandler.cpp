@@ -16,22 +16,22 @@ TileData CollisionHandler::MapCollisionFromPoint(Vector2D point)
 {
 	Vector2D pointOnMap;
 	TileData tileData;
-	GameLevel* currentLevel = GameEngine::GetInstance()->GetCurrentMap();
-	TileMap collisionTileMap = currentLevel->mCollisionLayer->GetTileMap();
+	Room* currentLevel = GameEngine::GetInstance()->GetCurrentMap();
+	TileMap collisionTileMap = currentLevel->mCollisionTileMap;
 	pointOnMap.X = point.X / TILE_SIZE;
 	pointOnMap.Y = point.Y / TILE_SIZE;
 	tileData.first = pointOnMap;
-	if ((pointOnMap.Y >= collisionTileMap.size() || pointOnMap.Y < 0) ||
-		(pointOnMap.X >= collisionTileMap[0].size() || pointOnMap.X < 0))
+	if ((pointOnMap.Y >= collisionTileMap.GetHeight() || pointOnMap.Y < 0) ||
+		(pointOnMap.X >= collisionTileMap.GetWidth() || pointOnMap.X < 0))
 	{
 		tileData.second = TileTypes::OUT_OF_BOUNDS;
 		return tileData;
 	}
-	if (pointOnMap.Y >= 0 && pointOnMap.Y < collisionTileMap.size())
+	if (pointOnMap.Y >= 0 && pointOnMap.Y < collisionTileMap.GetHeight())
 	{
-		if (pointOnMap.X >= 0 && pointOnMap.X < collisionTileMap[pointOnMap.Y].size())
+		if (pointOnMap.X >= 0 && pointOnMap.X < collisionTileMap.GetWidth())
 		{
-			tileData.second = ParseTileIntoType(collisionTileMap[pointOnMap.Y][pointOnMap.X]);
+			tileData.second = static_cast<TileTypes>(collisionTileMap[pointOnMap.Y][pointOnMap.X]);
 		}
 	}
 	return tileData;
@@ -86,13 +86,14 @@ Sint32 CollisionHandler::GetSlopeYDifference(TileData slopeTile, Sint32 x, Sint3
 	Sint32 yMod = y % TILE_SIZE;
 	return yMod - slopeY;
 }
-Sint32 CollisionHandler::HandleSlopeCollision(BaseEntity* entity, TileData slopeTile)
+Sint32 CollisionHandler::HandleSlopeCollision(BaseEntity* entity, TileData slopeTile, bool goingRight)
 {
 	if (!IsTileFloorSlope(slopeTile.second)) return 0;
 	RigidBody* rigidBodyPtr = entity->GetRigidBody();
 	Collider* colliderPtr = entity->GetCollider();
 	Transform* transformPtr = entity->GetTransform();
 	Sint32 x = colliderPtr->GetMiddlePointHorizontal();
+	//if (goingRight && (colliderPtr->GetBoxWidth() % 2) == 0) x++;
 	Sint32 y = colliderPtr->GetBboxBottom() - 1;
 
 	Sint32 yDifference = GetSlopeYDifference(slopeTile,x,y);
@@ -173,7 +174,7 @@ void CollisionHandler::HandlePlayerCollision(PlayerEntity* player, float timeDel
 
 	rigidBodyPtr->UpdateX(timeDelta);
 	transformPtr->X += rigidBodyPtr->GetPosition().X;
-	colliderPtr->SetPosition(transformPtr->X, transformPtr->Y);
+	colliderPtr->SetPosition(static_cast<Sint32>(transformPtr->X), static_cast<Sint32>(transformPtr->Y));
 	//Check for horizontal collisions first
 	if (rigidBodyPtr->GetVelocity().X > 0.0f)//Right collisions
 	{
@@ -197,17 +198,17 @@ void CollisionHandler::HandlePlayerCollision(PlayerEntity* player, float timeDel
 			interactedTile = MapCollisionFromPoint(Vector2D(colliderPtr->GetBboxRight() - 1, colliderPtr->GetMiddlePointVerticalBottom()));//
 			if (interactedTile.second == TileTypes::SOLID) foundSolid = true;
 		}
-		if (!foundSolid && !IsTileFloorSlope(interactedSlopeTile.second))
+		if (!foundSolid)//&& !IsTileFloorSlope(interactedSlopeTile.second)
 		{
 			interactedTile = MapCollisionFromPoint(Vector2D(colliderPtr->GetBboxRight() - 1, colliderPtr->GetBboxBottom() - 1));//Check the bottom tile
 			if (interactedTile.second == TileTypes::SOLID) foundSolid = true;
 		}
 		if (foundSolid)
 		{
-			transformPtr->X = colliderPtr->GetBboxRight() & ~(TILE_SIZE - 1);
-			transformPtr->X -= colliderPtr->GetBoxWidth();
+			transformPtr->X = static_cast<float>(colliderPtr->GetBboxRight() & ~(TILE_SIZE - 1));
+			transformPtr->X -= static_cast<float>(colliderPtr->GetBoxWidth());
 			transformPtr->RoundDownX();
-			colliderPtr->SetPosition(transformPtr->X, transformPtr->Y);
+			colliderPtr->SetPosition(static_cast<Sint32>(transformPtr->X), static_cast<Sint32>(transformPtr->Y));
 			rigidBodyPtr->ResetVelocityX();
 		}
 	}
@@ -233,17 +234,17 @@ void CollisionHandler::HandlePlayerCollision(PlayerEntity* player, float timeDel
 			interactedTile = MapCollisionFromPoint(Vector2D(colliderPtr->GetBboxLeft(), colliderPtr->GetMiddlePointVerticalBottom()));//
 			if (interactedTile.second == TileTypes::SOLID) foundSolid = true;
 		}
-		if (!foundSolid && !IsTileFloorSlope(interactedSlopeTile.second))
+		if (!foundSolid)//&& !IsTileFloorSlope(interactedSlopeTile.second)
 		{
 			interactedTile = MapCollisionFromPoint(Vector2D(colliderPtr->GetBboxLeft(), colliderPtr->GetBboxBottom() - 1));//Check the bottom tile
 			if (interactedTile.second == TileTypes::SOLID) foundSolid = true;
 		}
 		if (foundSolid)
 		{
-			transformPtr->X = colliderPtr->GetBboxLeft() & ~(TILE_SIZE - 1);
-			transformPtr->X += TILE_SIZE;
+			transformPtr->X = static_cast<float>(colliderPtr->GetBboxLeft() & ~(TILE_SIZE - 1));
+			transformPtr->X += static_cast<float>(TILE_SIZE);
 			transformPtr->RoundDownX();
-			colliderPtr->SetPosition(transformPtr->X, transformPtr->Y);
+			colliderPtr->SetPosition(static_cast<Sint32>(transformPtr->X), static_cast<Sint32>(transformPtr->Y));
 			rigidBodyPtr->ResetVelocityX();
 		}
 	}
@@ -251,7 +252,7 @@ void CollisionHandler::HandlePlayerCollision(PlayerEntity* player, float timeDel
 	foundSolid = false;
 	rigidBodyPtr->UpdateY(!player->GetGroundedStatus(),timeDelta);
 	transformPtr->Y += rigidBodyPtr->GetPosition().Y;
-	colliderPtr->SetPosition(transformPtr->X, transformPtr->Y);
+	colliderPtr->SetPosition(static_cast<Sint32>(transformPtr->X), static_cast<Sint32>(transformPtr->Y));
 	Sint32 slopeYdist = 0;
 	bool slopeBellow = false;
 	//Check for vertical Collision
@@ -263,19 +264,19 @@ void CollisionHandler::HandlePlayerCollision(PlayerEntity* player, float timeDel
 		if (!IsTileFloorSlope(interactedSlopeTile.second))
 		{
 			interactedTile = MapCollisionFromPoint(Vector2D(colliderPtr->GetBboxLeft(), colliderPtr->GetBboxBottom() - 1));
-			if (interactedTile.second == TileTypes::SOLID)foundSolid = true;
+			if (interactedTile.second == TileTypes::SOLID || interactedTile.second == TileTypes::VERTICAL_SOLID)foundSolid = true;
 		}
 		if (!foundSolid && !IsTileFloorSlope(interactedSlopeTile.second))
 		{
 			interactedTile = MapCollisionFromPoint(Vector2D(colliderPtr->GetBboxRight() - 1, colliderPtr->GetBboxBottom() - 1));
-			if (interactedTile.second == TileTypes::SOLID) foundSolid = true;
+			if (interactedTile.second == TileTypes::SOLID || interactedTile.second == TileTypes::VERTICAL_SOLID) foundSolid = true;
 		}
 		if (foundSolid)
 		{
-			transformPtr->Y = colliderPtr->GetBboxBottom() & ~(TILE_SIZE - 1);
-			transformPtr->Y -= colliderPtr->GetBoxHeight();
+			transformPtr->Y = static_cast<float>(colliderPtr->GetBboxBottom() & ~(TILE_SIZE - 1));
+			transformPtr->Y -= static_cast<float>(colliderPtr->GetBoxHeight());
 			transformPtr->RoundDownY();
-			colliderPtr->SetPosition(transformPtr->X, transformPtr->Y);
+			colliderPtr->SetPosition(static_cast<Sint32>(transformPtr->X), static_cast<Sint32>(transformPtr->Y));
 			rigidBodyPtr->ResetVelocityY();
 			player->SetGroundedStatus(true);
 		}
@@ -300,10 +301,10 @@ void CollisionHandler::HandlePlayerCollision(PlayerEntity* player, float timeDel
 		}
 		if (foundSolid)
 		{
-			transformPtr->Y = colliderPtr->GetBboxTop() & ~(TILE_SIZE - 1);
-			transformPtr->Y += TILE_SIZE;
+			transformPtr->Y = static_cast<float>(colliderPtr->GetBboxTop() & ~(TILE_SIZE - 1));
+			transformPtr->Y += static_cast<float>(TILE_SIZE);
 			transformPtr->RoundDownY();
-			colliderPtr->SetPosition(transformPtr->X, transformPtr->Y);
+			colliderPtr->SetPosition(static_cast<Sint32>(transformPtr->X), static_cast<Sint32>(transformPtr->Y));
 			rigidBodyPtr->ResetVelocityY();
 			player->SetCeilingHitStatus(true);
 		}
@@ -323,12 +324,23 @@ void CollisionHandler::HandlePlayerCollision(PlayerEntity* player, float timeDel
 		if (checkSolidCollision)
 		{
 			TileData bellowTileCheck = MapCollisionFromPoint(Vector2D(colliderPtr->GetBboxLeft(), colliderPtr->GetBboxBottom()));
-			if (bellowTileCheck.second == TileTypes::SOLID)
+			if (bellowTileCheck.second == TileTypes::SOLID || bellowTileCheck.second == TileTypes::VERTICAL_SOLID)
+			{
 				player->SetGroundedStatus(true);
+				//do another check to make sure we arent slightly in the ground
+				bellowTileCheck = MapCollisionFromPoint(Vector2D(colliderPtr->GetMiddlePointHorizontal(), colliderPtr->GetBboxBottom()));
+				if (bellowTileCheck.second == TileTypes::VERTICAL_SOLID)
+				{
+					transformPtr->Y = static_cast<float>(colliderPtr->GetBboxBottom() & ~(TILE_SIZE - 1));
+					transformPtr->Y -= static_cast<float>(colliderPtr->GetBoxHeight());
+					transformPtr->RoundDownY();
+					colliderPtr->SetPosition(static_cast<Sint32>(transformPtr->X), static_cast<Sint32>(transformPtr->Y));
+				}
+			}
 			else
 			{
 				bellowTileCheck = MapCollisionFromPoint(Vector2D(colliderPtr->GetBboxRight() - 1, colliderPtr->GetBboxBottom()));
-				if (bellowTileCheck.second == TileTypes::SOLID)
+				if (bellowTileCheck.second == TileTypes::SOLID || bellowTileCheck.second == TileTypes::VERTICAL_SOLID)
 					player->SetGroundedStatus(true);
 				else
 					player->SetGroundedStatus(false);

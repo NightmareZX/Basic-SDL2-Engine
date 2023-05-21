@@ -30,7 +30,12 @@ void Animation::Initialise(String spriteSheetName)
 void Animation::Update(String animState, float deltaTime, float cycleTimerOffset)
 {
 	//Update timers and other things here
-	if (!ValidateState(animState)) return;
+	if (!ValidateState(animState))
+	{
+		Logger::GetInstance()->Log("Animation.cpp: Error: The animation state '" + animState + "' is not registered!");
+		return;
+	}
+	AnimationStateData currentAnimState = AnimMapPtr(animState);
 	//if we are still on the same state
 	if (animState == mLastAnimState)
 	{
@@ -40,15 +45,15 @@ void Animation::Update(String animState, float deltaTime, float cycleTimerOffset
 		else
 		{
 			mCurrentFrame++;
-			if (mCurrentFrame > AnimMapPtr(animState).fCount)
+			if (mCurrentFrame > currentAnimState.fCount)
 				mCurrentFrame = 1;
-			mFrameCounter = AnimMapPtr(animState).cycleTime + cycleTimerOffset;
+			mFrameCounter = currentAnimState.cycleTime + cycleTimerOffset;
 		}
 	}
 	//if we are on a different state 
 	else
 	{
-		mFrameCounter = AnimMapPtr(animState).cycleTime + cycleTimerOffset;
+		mFrameCounter = currentAnimState.cycleTime + cycleTimerOffset;
 		mCurrentFrame = 1;
 	}
 
@@ -63,49 +68,10 @@ void Animation::Update(String animState, float deltaTime, float cycleTimerOffset
 	{
 		SDL_FreeSurface(mCurrentSurface);
 		if (mCurrentTexture != nullptr) SDL_DestroyTexture(mCurrentTexture);
-		Uint32 surfHeight = 0;
-		Uint32 surfWidth = 0;
-		SegmentList segList = AnimMapPtr(animState).segmentList;
-		//A vector of positions for all segments, they defines where in the current surface will they be placed in
-		vector<Uint32> blitYPos;
-		vector<Uint32> blitXPos;
-		//
-		bool aggregatedHeight = false;
-		bool aggregatedWidth = false;
-
-		//Add up the width and height of segments
-		for (Sint32 i = 0; i < segList.size(); i++)
-		{
-			//get the offsets that are relative to the surface, the offsets will displace the segment
-			//within the surface that the animation will be stitched together in
-			Sint32 segmentYOffset = AnimMapPtr(animState).y_offsets[i];
-			Sint32 segmentXOffset = AnimMapPtr(animState).x_offsets[i];
-
-			if (segList[i]->flags & AnimationFlags::AGR_HEIGHT)
-			{
-				if (i == 0) blitYPos.push_back(0);
-				else blitYPos.push_back(surfHeight + segmentYOffset);
-				surfHeight += segList[i]->height - segList[i]->heightOffset;
-				aggregatedHeight = true;
-			}
-			else blitYPos.push_back(segmentYOffset);
-			if (segList[i]->flags & AnimationFlags::AGR_WIDTH)
-			{
-				if (i == 0) blitXPos.push_back(0);
-				else blitXPos.push_back(surfWidth + segmentXOffset);
-				surfWidth += segList[i]->width - segList[i]->widthOffset;
-				aggregatedWidth = true;
-			}
-			else blitXPos.push_back(segmentXOffset);
-		}
-
-		if (!aggregatedWidth)
-			surfWidth = AnimMapPtr(animState).width;
-		if (!aggregatedHeight)
-			surfHeight = AnimMapPtr(animState).height;
+		SegmentList segList = currentAnimState.segmentList;
 
 		//create a temporary surface to render our animation into so that we can create it into a texture and then render it
-		SDL_Surface* currentSurface = SDL_CreateRGBSurface(0,surfWidth,surfHeight,32,0,0,0,0);
+		SDL_Surface* currentSurface = SDL_CreateRGBSurface(0, currentAnimState.width, currentAnimState.height,32,0,0,0,0);
 
 		//add the segments to the surface
 		for (Sint32 i = segList.size() - 1; i >= 0; i--)
@@ -114,7 +80,6 @@ void Animation::Update(String animState, float deltaTime, float cycleTimerOffset
 			AnimationSegmentData* currentSegment = segList[i];
 			Uint32 currFrame = mCurrentFrame;
 			Uint32 sourceX = 0;
-			Uint32 sourceY = 0;
 
 			//Modulo the current frame for this segment by the fcount so that we arent trying to access any frames beyond
 			//the current segment's registered frames
@@ -131,35 +96,54 @@ void Animation::Update(String animState, float deltaTime, float cycleTimerOffset
 			//at the first frame
 			currFrame--;
 
-			//Get the offset that we will add onto the initial index, basically get how much we will add to the initial index to get
-			//the top left X pixel position of our current frame
-			Uint32 xIndexOffset = (currentSegment->width * currFrame) + (currentSegment->borderSize * currFrame);
+			SDL_Rect src = {0,0,static_cast<Sint32>(currentSegment->width), static_cast<Sint32>(currentSegment->height) };
+			SDL_Surface* sourceSurface = nullptr;
+			Uint32 XIndex = 0;
+
+			Uint32 xIndexOffset = 0;
+
+			SDL_Surface* flippedSegment = AnimationManager::GetInstance()->GetFlippedSegment(currentSegment, currentAnimState.flip_flags[i]);
+			//If we are dealing with a flipped segment, then we do things sightly differently
+			if (flippedSegment != nullptr)
+			{
+				xIndexOffset = currentSegment->width * currFrame;
+				
+				sourceSurface = flippedSegment;
+			}
+			else
+			{
+				//Get the offset that we will add onto the initial index, basically get how much we will add to the initial index to get
+				//the top left X pixel position of our current frame
+				xIndexOffset = (currentSegment->width * currFrame) + (currentSegment->borderSize * currFrame);
+
+				src.y = static_cast<Sint32>(currentSegment->YIndex);
+				XIndex = currentSegment->XIndex;
+
+				sourceSurface = mSpriteSheetPtr;
+			}
 
 			//If the reverse flag is on, then we will take the offset away so we will go behind the initial X index
-			if (AnimMapPtr(animState).flags & AnimationFlags::REVERSE || currentSegment->flags & AnimationFlags::REVERSE)
-				sourceX = currentSegment->XIndex - xIndexOffset;
+			if (currentAnimState.flags & AnimationFlags::REVERSE || currentSegment->flags & AnimationFlags::REVERSE)
+				sourceX = XIndex - xIndexOffset;
 			//Other wise add the offset so we go forward to the next frame
 			else
-				sourceX = currentSegment->XIndex + xIndexOffset;
+				sourceX = XIndex + xIndexOffset;
 
-			SDL_Rect src = { 
-				static_cast<Sint32>(sourceX),
-				static_cast<Sint32>(currentSegment->YIndex),
+			src.x = static_cast<Sint32>(sourceX);
+
+			SDL_Rect dst = {
+				static_cast<Sint32>(currentAnimState.blitXPos[i]),
+				static_cast<Sint32>(currentAnimState.blitYPos[i]),
 				static_cast<Sint32>(currentSegment->width),
 				static_cast<Sint32>(currentSegment->height) };
-			SDL_Rect dst = { 
-				static_cast<Sint32>(blitXPos[i]),
-				static_cast<Sint32>(blitYPos[i]),
-				static_cast<Sint32>(currentSegment->width),
-				static_cast<Sint32>(currentSegment->height)};
-			SDL_UpperBlit(mSpriteSheetPtr, &src, currentSurface, &dst);
+			RenderManager::BlitSurface(sourceSurface, &src, currentSurface, &dst);
 		}
 		mCurrentSurface = currentSurface;
 		mCurrentTexture = SDL_CreateTextureFromSurface(GameEngine::GetInstance()->GetRenderer(), currentSurface);
 		mCurrentTextureWidth = currentSurface->w;
 		mCurrentTextureHeight = currentSurface->h;
-		mCurrentYDrawOffset = AnimMapPtr(animState).YDrawOffset;
-		mCurrentXDrawOffset = AnimMapPtr(animState).XDrawOffset;
+		mCurrentYDrawOffset = currentAnimState.YDrawOffset;
+		mCurrentXDrawOffset = currentAnimState.XDrawOffset;
 	}
 	//================================================================================================
 	//								Normal Animation Handling

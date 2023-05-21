@@ -7,24 +7,33 @@
 #include "Animation.h"
 #include "Collider.h"
 
+enum FacingDirection
+{
+	LEFT_FD,
+	RIGHT_FD
+};
+
 class BaseEntity : public BaseGameObject
 {
 protected:
-	String name;
 
 	RigidBody* mRigidBody;
 	Collider* mCollider;
 	Animation* mAnimation;
+	FacingDirection mFacingDirection;
+
 	bool mGrounded;
 	bool mHitCeiling;
+
+	Uint32 mCommonFlags;
 public:
 	//Vector2D position;
-	BaseEntity(Properties* props): BaseGameObject(props), mRigidBody(new RigidBody), mAnimation(new Animation), mCollider(new Collider),
-		mGrounded(false), mHitCeiling(false){}
+	BaseEntity(float x, float y): BaseGameObject(x,y), mRigidBody(new RigidBody), mAnimation(new Animation), mCollider(new Collider),
+		mGrounded(false), mHitCeiling(false), mFacingDirection(LEFT_FD){}
 	virtual void Draw() = 0;
 	virtual void Update(float timeDelta) = 0;
 	virtual void Dispose() = 0;
-	inline RigidBody * GetRigidBody() { return mRigidBody; }
+	inline RigidBody* GetRigidBody() { return mRigidBody; }
 	inline Collider* GetCollider() { return mCollider; }
 	inline Animation* GetAnimationHandler() { return mAnimation; };
 	inline bool GetGroundedStatus() { return mGrounded; }

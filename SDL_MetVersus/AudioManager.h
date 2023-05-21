@@ -62,6 +62,14 @@ public:
 	void RegisterSound(String filename, Mix_MusicType type, String path = "");
 	void RegisterMusic(String filename, Mix_MusicType type, String path = "");
 	void PlaySoundEffect(String soundID, GameAudioChannels channel, bool interupt = true, Sint32 loopCount = 0);
+	/// <summary>
+	/// The function that is used to play an already registered piece of music
+	/// </summary>
+	/// <param name="musicID">: The id of the registered music that should play</param>
+	/// <param name="fadeOutCurrent">: Wether the currently playing music should be faded out (does nothing if no music is playing)</param>
+	/// <param name="fadeInNext">: Wether the music that is being passed in should be faded in after the current one ends</param>
+	/// <param name="msToFadeOut">: The milliseconds that it should take to fade out the currently playing music</param>
+	/// <param name="msToFadeIn">: The milliseconds that it should take to fade in the next music</param>
 	void PlayMusic(String musicID, bool fadeOutCurrent = false, bool fadeInNext = false, Sint32 msToFadeOut = 0, Sint32 msToFadeIn = 0);
 	/// <summary>
 	/// Sets the volume of a specific group of channels

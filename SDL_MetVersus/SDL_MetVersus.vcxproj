@@ -104,13 +104,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Owner\Documents\Visual Studio External Libraries\SDL_TTF;C:\Users\Owner\Documents\Visual Studio External Libraries\SDL_Image;C:\Users\Owner\Documents\Visual Studio External Libraries\SDL2\lib\x64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)SDL Libs\SDL_TTF;$(ProjectDir)SDL Libs\SDL_Image;$(ProjectDir)SDL Libs\SDL2\lib\x64;$(ProjectDir)LDtkLoader\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Owner\source\repos\SDL_MetVersus\SDL_MetVersus\TinyXML;C:\Users\Owner\Documents\Visual Studio External Libraries\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)LDtkLoader\lib;$(ProjectDir)LDtkLoader\include;$(ProjectDir)TinyXML;$(ProjectDir)SDL Libs\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;LDtkLoader.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -132,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationManager.cpp" />
+    <ClCompile Include="GameRules.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BaseEntity.cpp" />
     <ClCompile Include="BaseGameObject.cpp" />
@@ -140,13 +142,13 @@
     <ClCompile Include="GlobalTimer.cpp" />
     <ClCompile Include="EventHandler.cpp" />
     <ClCompile Include="FileHandler.cpp" />
-    <ClCompile Include="GameLevel.cpp" />
+    <ClCompile Include="Room.cpp" />
     <ClCompile Include="IniFile.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MainEntryPoint.cpp" />
     <ClCompile Include="GameEngine.cpp" />
-    <ClCompile Include="MapParser.cpp" />
+    <ClCompile Include="MapManager.cpp" />
     <ClCompile Include="PlayerEntity.cpp" />
     <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="TileLayer.cpp" />
@@ -159,6 +161,7 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationManager.h" />
+    <ClInclude Include="GameRules.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="BaseEntity.h" />
     <ClInclude Include="BaseGameObject.h" />
@@ -169,12 +172,13 @@
     <ClInclude Include="GlobalTimer.h" />
     <ClInclude Include="EventHandler.h" />
     <ClInclude Include="FileHandler.h" />
-    <ClInclude Include="GameLevel.h" />
+    <ClInclude Include="Matrix2D.h" />
+    <ClInclude Include="Room.h" />
     <ClInclude Include="IGameObject.h" />
     <ClInclude Include="IniFile.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Logger.h" />
-    <ClInclude Include="MapParser.h" />
+    <ClInclude Include="MapManager.h" />
     <ClInclude Include="PlayerEntity.h" />
     <ClInclude Include="RenderManager.h" />
     <ClInclude Include="RigidBody.h" />

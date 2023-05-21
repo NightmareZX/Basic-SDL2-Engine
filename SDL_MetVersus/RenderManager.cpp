@@ -131,7 +131,7 @@ void RenderManager::DrawTile(String textureID, Sint32 x, Sint32 y, Uint32 column
 		static_cast<Sint32>(tileSize * scalers.X),
 		static_cast<Sint32>(tileSize * scalers.Y)};
 
-	SDL_Rect source = { static_cast<Sint32>(column * tileSize), static_cast<Sint32>(row * tileSize),
+	SDL_Rect source = { static_cast<Sint32>(column), static_cast<Sint32>(row),
 		static_cast<Sint32>(tileSize), static_cast<Sint32>(tileSize) };
 	SDL_RenderCopyEx(GameEngine::GetInstance()->GetRenderer(), mTextureMap[textureID],
 		&source, &destination,
@@ -174,4 +174,70 @@ void RenderManager::SetWindowDimensions(Uint32 width, Uint32 height)
 	mWindowHeight = height;
 	mWindowWidth = width;
 	Camera::GetInstance()->SetDisplayBox(0,0,width,height);
+}
+void RenderManager::BlitSurface(SDL_Surface* src, const SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect, SDL_RendererFlip flip)
+{
+	if (flip == SDL_FLIP_NONE)
+	{
+		SDL_UpperBlit(src, srcrect, dst, dstrect);
+		return;
+	}
+	//Create a temporary surface so that we can use it to flip the pixels
+	SDL_Surface* tempSurface = SDL_CreateRGBSurfaceWithFormat(0, srcrect->w, srcrect->h, src->format->BytesPerPixel, src->format->format);
+	SDL_UpperBlit(src,srcrect, tempSurface, nullptr);
+
+	if (flip & SDL_FLIP_HORIZONTAL)
+		SurfaceFlipHorizontal(tempSurface);
+	if (flip & SDL_FLIP_VERTICAL)
+		SurfaceFlipVertical(tempSurface);
+
+	SDL_UpperBlit(tempSurface,nullptr,dst,dstrect);
+}
+void RenderManager::SurfaceFlipHorizontal(SDL_Surface* surface)
+{
+	SDL_LockSurface(surface);
+	Sint32 pitch = surface->pitch;
+	Uint8* pixels = reinterpret_cast<Uint8*>(surface->pixels);
+	Uint8 bytesPerPixel = surface->format->BytesPerPixel;
+
+	Uint8 rowLenght = surface->w * bytesPerPixel;
+	for (size_t row = 0; row < surface->h; row++)
+	{
+		Uint8* currentRow = pixels + (row * pitch);
+
+		Uint8* start = currentRow;
+		Uint8* end = currentRow + rowLenght - bytesPerPixel;
+		while (start < end) 
+		{
+			for (size_t i = 0; i < bytesPerPixel; i++) 
+			{
+				std::swap(*(start + i), *(end + i));
+			}
+			start += bytesPerPixel;
+			end -= bytesPerPixel;
+		}
+
+	}
+	SDL_UnlockSurface(surface);
+}
+void RenderManager::SurfaceFlipVertical(SDL_Surface* surface)
+{
+	SDL_LockSurface(surface);
+	Sint32 pitch = surface->pitch;
+	Uint8* tempBuffer = new Uint8[pitch];
+	Uint8* pixels = reinterpret_cast<Uint8*>(surface->pixels);
+
+	for (size_t i = 0; i < surface->h / 2; i++)
+	{
+		Uint8* row1 = pixels + i * pitch;
+		Uint8* row2 = pixels + (surface->h - i - 1) * pitch;
+
+		memcpy(tempBuffer, row1, pitch);
+		memcpy(row1, row2, pitch);
+		memcpy(row2, tempBuffer, pitch);
+	}
+
+	delete[] tempBuffer;
+
+	SDL_UnlockSurface(surface);
 }

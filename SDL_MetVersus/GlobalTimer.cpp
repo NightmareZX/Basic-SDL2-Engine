@@ -32,9 +32,11 @@ void GlobalTimer::Tick()
 void GlobalTimer::TickFixedStep()
 {
 	Uint32 currentTime = SDL_GetTicks();
-	Uint32 deltaTime = currentTime - mLastTime32;
+	Uint32 timeDifference = currentTime - mLastTime32;
 	mLastTime32 = currentTime;
 
-	mAccumulator += deltaTime / 1000.0f;//convert to seconds
+	mTimeDelta = timeDifference / 1000.0f;
+
+	mAccumulator += mTimeDelta;//convert to seconds
 }
 

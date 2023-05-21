@@ -4,6 +4,9 @@
 #include "Constants.h"
 #include "Layer.h"
 #include "RenderManager.h"
+#include "Vector2D.h"
+#include "Matrix2D.h"
+//#include "SimpleMatrix.h"
 
 //===============================================================
 //						Tile Constants
@@ -16,8 +19,9 @@ enum TileTypes : Uint8
 	SOLID = 1,//Activly stops most objects including the player from going inside it
 	LEFT_SLOPE = 2,
 	RIGHT_SLOPE = 3,
-	CEILING_LEFT_SLOPE = 4,
-	CEILING_RIGHT_SLOPE = 5,
+	VERTICAL_SOLID = 4,
+	CEILING_LEFT_SLOPE = 5,
+	CEILING_RIGHT_SLOPE = 6,
 
 	OUT_OF_BOUNDS = 0xDF,
 	NONE = 0xEF,
@@ -45,8 +49,19 @@ struct TileSet
 	//The source file of the tile set
 	String source;
 };
+
+struct TileSetInfo
+{
+	String tileSetPath = "";
+
+	Uint32 width = 0;
+	Uint32 height = 0;
+	//A map that keeps a specific tile's position in its tilemap texture, so that it can be used as a reference when rendering
+	unordered_map<Uint32, Vector2D> tileTextureSource;
+};
+
 using TileSetList = vector<TileSet>;
-using TileMap = vector<vector<Uint32>>;
+using TileMap = Matrix2D<Uint32>;
 
 class TileLayer : public Layer
 {
@@ -55,16 +70,15 @@ private:
 	Uint32 mWidth;
 
 	TileMap mTilemap;
-	TileSetList mTileSetList;
+	String mTileSetName;
 
-	ValidLayers mLayerType;
 public:
-	TileLayer(Uint32 height, Uint32 width, TileMap tilemap, TileSetList tilesets, ValidLayers type):
-		mHeight(height), mWidth(width), mTilemap(tilemap), mTileSetList(tilesets), mLayerType(type){}
+	TileLayer(Uint32 height, Uint32 width, TileMap tilemap,String tileSetName):
+		mHeight(height), mWidth(width), mTilemap(tilemap), mTileSetName(tileSetName){}
 	virtual void Render();
 	virtual void Update();
 	inline TileMap GetTileMap() { return mTilemap; }
+	//inline Uint32 AccessTile(size_t row, size_t column) {return}
 	inline Uint32 GetRowCount() { return mHeight; }
 	inline Uint32 GetColumnCount() { return mWidth; }
-	inline ValidLayers GetLayerType() { return mLayerType; }
 };

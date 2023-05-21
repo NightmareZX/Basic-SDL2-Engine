@@ -12,6 +12,7 @@ struct SharedAnimation
 	Uint32 referenceCount = 0;
 	bool isSegmented = false;
 	SDL_Surface* spriteSheetSurface = nullptr;
+	vector<SDL_Surface*> flippedSegments;
 };
 using LoadedAnimationsMap = map<String, SharedAnimation*>;
 
@@ -24,6 +25,7 @@ struct AnimationMetaData
 
 #pragma endregion
 
+
 class AnimationManager
 {
 private:
@@ -33,8 +35,10 @@ private:
 
 	bool ValidateAnimation(String spriteSheetID);
 	SharedAnimation* LoadAnimation(String spriteSheetName);
+	void HandleSegmentFlipping(AnimationSegmentData* segmentToFlip, Uint32 flipFlags, SDL_Surface* spriteSheet);
 public:
 	static inline AnimationManager* GetInstance() { if (mInstance == nullptr)mInstance = new AnimationManager; return mInstance; }
+	SDL_Surface* GetFlippedSegment(AnimationSegmentData* segmentData, SDL_RendererFlip flipFlags);
 	AnimationMetaData GetAnimation(String spriteSheetName);
 	void RemoveAnimation(String spriteSheetID);
 	void RefreshLoadedAnimations();

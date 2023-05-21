@@ -2,9 +2,9 @@
 #include "STL_Components.h"
 #include "SDL.h"
 #include "Constants.h"
-#include "GameLevel.h"
+#include "Room.h"
 #include "RenderManager.h"
-#include "MapParser.h"
+#include "MapManager.h"
 #include "Logger.h"
 #include "EventHandler.h"
 #include "CollisionHandler.h"
@@ -17,8 +17,9 @@ private:
 	SDL_Renderer* mMainRenderer;
 	
 	bool mRunningStatus;
+	bool mFrameAdvanceMode;
 
-	GameLevel* mCurrentLevel;
+	Room* mCurrentLevel;
 	static GameEngine* mInstance;
 
 public:
@@ -27,7 +28,7 @@ public:
 
 	inline void QuitEngine() { mRunningStatus = false; }
 	inline static GameEngine* GetInstance() { if (mInstance == nullptr) mInstance = new GameEngine(); return mInstance; }
-	inline GameLevel* GetCurrentMap() { return mCurrentLevel; }
+	inline Room* GetCurrentMap() { return mCurrentLevel; }
 	inline SDL_Renderer* GetRenderer() { return mMainRenderer; }
 	inline SDL_Window* GetWindow() { return mMainWindow; }
 private:

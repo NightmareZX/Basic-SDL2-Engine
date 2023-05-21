@@ -15,6 +15,9 @@ enum AnimationFlags : Uint8
 
 };
 
+//(Uin32 = flip flags, SDL_Surface* = surface pointer to flipped segment)
+using FlippedSegment = std::pair<Uint32, SDL_Surface*>;
+using FlippedSegmentList = vector<FlippedSegment>;
 /// <summary>
 /// A structure that holds a particular segment which will be combined with other segment(s)
 /// </summary>
@@ -32,6 +35,7 @@ struct AnimationSegmentData
 	//Uint32 XOffset = 0;
 	//
 	//Uint32 YOffset = 0;
+
 	//
 	Uint32 fCount = 0;
 	//
@@ -44,10 +48,20 @@ struct AnimationSegmentData
 	Uint32 borderSize = 0;
 	//
 	Uint8 flags = 0;
+	//
+	FlippedSegmentList flippedVersions;
+
+	~AnimationSegmentData()
+	{
+		for (size_t i = 0; i < flippedVersions.size(); i++)
+		{
+			SDL_FreeSurface(flippedVersions[i].second);
+		}
+	}
 };
 using SegmentList = vector<AnimationSegmentData*>;
 
-struct AnimationData
+struct AnimationStateData
 {
 	//Width of the frame and subsequent frames
 	Uint32 width = 0;
@@ -72,17 +86,20 @@ struct AnimationData
 	//
 	SegmentList segmentList;
 
-	//Vectors that hold the segments' x and y offsets 
+	//These vectors hold the X and Y position of the top left corner of each segment in the whole combimed state
+	vector<Uint32> blitYPos;
+	vector<Uint32> blitXPos;
 
-	vector<Sint32> x_offsets;
-	vector<Sint32> y_offsets;
+	//
+	vector<SDL_RendererFlip> flip_flags;
+
 
 	//
 	Uint8 flags = 0;
 
 };
 
-using AnimationMap = unordered_map<String, AnimationData>;
+using AnimationMap = unordered_map<String, AnimationStateData>;
 
 #pragma endregion
 class Animation

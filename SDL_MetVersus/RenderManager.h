@@ -20,6 +20,10 @@ private:
 public:
 	
 	inline static RenderManager* GetInstance(){ if (mInstance == nullptr) mInstance = new RenderManager(); return mInstance; }
+	static void SurfaceFlipHorizontal(SDL_Surface* surface);
+	static void SurfaceFlipVertical(SDL_Surface* surface);
+	static void BlitSurface(SDL_Surface* src, const SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect, SDL_RendererFlip flip = SDL_FLIP_NONE);
+
 	void RegisterTexture(String id, String filename);
 	SDL_Surface* RegisterSurface(String id, String filename);
 	void RegisterFont(String id, String filename, Uint32 size);

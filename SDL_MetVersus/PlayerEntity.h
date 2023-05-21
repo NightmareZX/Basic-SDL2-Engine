@@ -2,75 +2,39 @@
 #include "BaseEntity.h"
 #include "RigidBody.h"
 
+
 class PlayerEntity : public BaseEntity
 {
 private:
-	enum FacingDirection;
-	bool mJumping;
-	
 
 	float mJumpTimer;
 	float mJumpAirTime;
 	float mJumpCooldown;
 	float mJumpForce;
+	float mTurnAroundTimer;
 
-	FacingDirection mFacingDirection;
+	bool mJumping;
+
 public:
-	PlayerEntity(Properties* props);
+	PlayerEntity(float x, float y);
 	void Update(float timeDelta) override;
 	void Draw() override;
 	void Dispose() override;
 	inline bool GetJumpingStatus() { return mJumping; }
-	String GetPositionStatus()
-	{
-		StringStream ss;
-		ss << "X: " << mCollider->GetBboxLeft() <<
-			"  Y: " << mCollider->GetBboxTop() <<
-			" XW: " << mCollider->GetBboxRight() <<
-			" YH: " << mCollider->GetBboxBottom() <<
-			" HM: " << mCollider->GetMiddlePointHorizontal();
-		return ss.str();
-	}
+	String GetPositionStatus();
 private:
-	enum AnimStates
+	enum ColliderStates
 	{
-		STANDING,
-		RUNNING,
-		RUNNING_AIMING_FORWARD,
-		RUNNING_AIMING_DIAGONAL_UP,
-		RUNNING_AIMING_DIAGONAL_DOWN,
-		STANDING_TURNING,
-		STRIGHT_JUMPING,
-		SPIN_JUMPING,
-		LANDING,
-		SHOOTING,
-		MIDAIR_SHOOTING,
-		MIDAIR_AIMING_UP,
-		MIDAIR_AIMING_DOWN,
-		MIDAIR_AIMING_DIAGONAL_UP,
-		MIDAIR_AIMING_DIAGONAL_DOWN,
-		MIDAIR_TURING,
-		AIMING_UP,
-		AIMING_DIAGONAL_UP,
-		AIMING_DIAGONAL_DOWN,
-		CROUCHING,
-		CROUCHING_TRANSITION,
-		CROUCH_AIMING_UP,
-		CROUCH_AIMING_DIAGONAL_UP,
-		CROUCH_AIMING_DIAGONAL_DOWN,
-		CROUCH_TRUNING,
-		MORPHING_TRANSITION,
-		MORPH_ROLLING
-
-		
+		STANDING_CS,
+		STRAIGHT_JUMPING_CS,
+		SPIN_JUMPING_CS,
+		CROUCHING_CS,
+		MORPHED_CS
 	};
-	enum FacingDirection
-	{
-		LEFT,
-		RIGHT
-	};
+	void SetColliderState(ColliderStates state);
+	void InitialiseTimers();
 	void InitialiseAnimStates();
-	String GetAnimState();
+	void HandleAnimState(float timeDelta);
 };
 
 

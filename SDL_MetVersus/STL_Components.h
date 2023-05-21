@@ -32,6 +32,10 @@
 
 #include <algorithm>
 
+#include <tuple>
+
+//#include <array>
+
 //standard library c++ string
 using String = std::string;
 
