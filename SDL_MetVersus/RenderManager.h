@@ -1,29 +1,44 @@
 #pragma once
-#include "STL_Components.h"
+#include "Containers.h"
 #include "Constants.h"
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
+#include "Logger.h"
+#include "Camera.h"
 
 using FontData = pair<SDL_Color, TTF_Font*>;
 
-class RenderManager
+class GameEngine;
+
+class RenderManager final
 {
 private:
-	RenderManager();
+	friend class GameEngine;
+
+	SDL_Window* mMainWindow;
+	SDL_Renderer* mMainRenderer;
+
+	Logger* mLoggerInstance;
+	Camera* mCameraInstance;
+
 	Uint32 mWindowHeight;
 	Uint32 mWindowWidth;
-	static RenderManager* mInstance;
 	map<String, SDL_Texture*> mTextureMap;
 	map<String, SDL_Surface*> mSurfaceMap;
 	map<String, FontData> mFontMap;
+
+	bool mFailFlag;
+
+	inline void RendererPresent() { SDL_RenderPresent(mMainRenderer); }
+	inline void RendererClear() { SDL_RenderClear(mMainRenderer); }
 public:
-	
-	inline static RenderManager* GetInstance(){ if (mInstance == nullptr) mInstance = new RenderManager(); return mInstance; }
+	RenderManager(Logger* logger, Camera* camera);
 	static void SurfaceFlipHorizontal(SDL_Surface* surface);
 	static void SurfaceFlipVertical(SDL_Surface* surface);
 	static void BlitSurface(SDL_Surface* src, const SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
+	inline SDL_Renderer* GetRenderer() { return mMainRenderer; }
 	void RegisterTexture(String id, String filename);
 	SDL_Surface* RegisterSurface(String id, String filename);
 	void RegisterFont(String id, String filename, Uint32 size);
@@ -42,6 +57,7 @@ public:
 	bool ValidateSurface(String id);
 	bool ValidateFont(String id);
 	void SetWindowDimensions(Uint32 width, Uint32 height);
+	void InitCamera();
 	void Dispose();
 };
 

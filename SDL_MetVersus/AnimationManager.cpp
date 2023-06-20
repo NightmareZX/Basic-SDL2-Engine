@@ -1,8 +1,7 @@
 #include "AnimationManager.h"
 #include "RenderManager.h"
 #include "IniFile.h"
-
-AnimationManager* AnimationManager::mInstance = nullptr;
+#include <iterator>
 
 AnimationMetaData AnimationManager::GetAnimation(String spriteSheetName)
 {
@@ -19,6 +18,8 @@ AnimationMetaData AnimationManager::GetAnimation(String spriteSheetName)
 	metaData.animMap = mLoadedAnimations[spriteSheetName]->animMap;
 	metaData.isSegmented = mLoadedAnimations[spriteSheetName]->isSegmented;
 	metaData.spriteSheetSurface = mLoadedAnimations[spriteSheetName]->spriteSheetSurface;
+	metaData.spriteSheetName = spriteSheetName;
+	metaData.renderManagerInstance = mRendererManagerInstance;
 
 	return metaData;
 }
@@ -59,15 +60,15 @@ SharedAnimation* AnimationManager::LoadAnimation(String spriteSheetName)
 		{
 			isSegmented = (animationProps.GetBooleanValue(section, "is_dynamic"));
 
-			if (!RenderManager::GetInstance()->ValidateTexture(spriteSheetName))
+			if (!mRendererManagerInstance->ValidateTexture(spriteSheetName))
 			{
 				if (isSegmented)
 				{
-					spriteSheetPtr = RenderManager::GetInstance()->RegisterSurface(spriteSheetName, spriteSheetName + ".png");
+					spriteSheetPtr = mRendererManagerInstance->RegisterSurface(spriteSheetName, spriteSheetName + ".png");
 				}
 				else
 				{
-					RenderManager::GetInstance()->RegisterTexture(spriteSheetName, spriteSheetName + ".png");
+					mRendererManagerInstance->RegisterTexture(spriteSheetName, spriteSheetName + ".png");
 				}
 			}
 		}
@@ -226,7 +227,7 @@ void AnimationManager::HandleSegmentFlipping(AnimationSegmentData* segmentToFlip
 		if (flipFlags & SDL_FLIP_HORIZONTAL) RenderManager::SurfaceFlipHorizontal(flippedFrame);
 		if (flipFlags & SDL_FLIP_VERTICAL) RenderManager::SurfaceFlipVertical(flippedFrame);
 		SDL_Rect dest;
-		dest.x = segmentToFlip->width * i;//MIGHT NEED TO ADD 1 HERE
+		dest.x = segmentToFlip->width * i;
 		dest.y = 0;
 		dest.w = segmentToFlip->width;
 		dest.h = segmentToFlip->height;
@@ -236,19 +237,6 @@ void AnimationManager::HandleSegmentFlipping(AnimationSegmentData* segmentToFlip
 	segmentToFlip->flippedVersions.push_back(pair<Uint32, SDL_Surface*>(flipFlags, flippedSegment));
 }
 
-SDL_Surface* AnimationManager::GetFlippedSegment(AnimationSegmentData* segmentData, SDL_RendererFlip flipFlags)
-{
-	SDL_Surface* flippedSurface = nullptr;
-	FlippedSegmentList* flippedList = &segmentData->flippedVersions;
-	for (size_t i = 0; i < flippedList->size(); i++)
-	{
-		if ((*flippedList)[i].first == static_cast<Uint32>(flipFlags))
-		{
-			flippedSurface = (*flippedList)[i].second;
-		}
-	}
-	return flippedSurface;
-}
 void AnimationManager::RefreshLoadedAnimations()
 {
 	for (LoadedAnimationsMap::iterator it = mLoadedAnimations.begin(); it != mLoadedAnimations.end(); it++)

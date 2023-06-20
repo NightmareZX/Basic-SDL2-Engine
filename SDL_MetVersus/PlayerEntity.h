@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseEntity.h"
 #include "RigidBody.h"
+#include "EventHandler.h"
 
 
 class PlayerEntity : public BaseEntity
@@ -15,14 +16,16 @@ private:
 
 	bool mJumping;
 
+	EventHandler* mEventHandlerInstance;
 public:
-	PlayerEntity(float x, float y);
+	PlayerEntity(float x, float y, EventHandler* eventHandler, Animation* anim);
 	void Update(float timeDelta) override;
 	void Draw() override;
 	void Dispose() override;
 	inline bool GetJumpingStatus() { return mJumping; }
 	String GetPositionStatus();
-private:
+	void HandleAnimState(float timeDelta);
+protected:
 	enum ColliderStates
 	{
 		STANDING_CS,
@@ -34,7 +37,6 @@ private:
 	void SetColliderState(ColliderStates state);
 	void InitialiseTimers();
 	void InitialiseAnimStates();
-	void HandleAnimState(float timeDelta);
 };
 
 

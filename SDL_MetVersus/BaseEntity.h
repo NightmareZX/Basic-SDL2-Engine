@@ -1,6 +1,6 @@
 #pragma once
 #include "SDL.h"
-#include "STL_Components.h"
+#include "String.h"
 #include "BaseGameObject.h"
 #include "Vector2D.h"
 #include "RigidBody.h"
@@ -12,6 +12,16 @@ enum FacingDirection
 	LEFT_FD,
 	RIGHT_FD
 };
+
+enum EntityType
+{
+	GENERIC,
+	PLAYER,
+	NPC,
+	PROJECTILE
+};
+
+class ObjectManager;
 
 class BaseEntity : public BaseGameObject
 {
@@ -26,10 +36,15 @@ protected:
 	bool mHitCeiling;
 
 	Uint32 mCommonFlags;
+	const String mClassName;
+	EntityType mEntityType;
+
+	friend class ObjectManager;
 public:
 	//Vector2D position;
-	BaseEntity(float x, float y): BaseGameObject(x,y), mRigidBody(new RigidBody), mAnimation(new Animation), mCollider(new Collider),
-		mGrounded(false), mHitCeiling(false), mFacingDirection(LEFT_FD){}
+	BaseEntity(float x, float y, String className, EntityType type):
+		BaseGameObject(x,y), mRigidBody(new RigidBody), mAnimation(nullptr), mCollider(new Collider),
+		mGrounded(false), mHitCeiling(false), mFacingDirection(LEFT_FD), mClassName(className), mEntityType(type){}
 	virtual void Draw() = 0;
 	virtual void Update(float timeDelta) = 0;
 	virtual void Dispose() = 0;

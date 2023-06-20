@@ -1,9 +1,9 @@
 #include "Logger.h"
 #include <iomanip>
+#include <iostream>
 
 using std::cout;
 
-Logger* Logger::instance = nullptr;
 void Logger::ToggleLogger(){ allowConsoleLog = !allowConsoleLog; }
 void Logger::Log(String message)
 {

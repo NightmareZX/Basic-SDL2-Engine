@@ -1,6 +1,9 @@
 #pragma once
-#include "STL_Components.h"
+#include "Containers.h"
+#include "String.h"
 #include "SDL.h"
+#include "RenderManager.h"
+#include "Logger.h"
 
 #pragma region Other_Declerations
 
@@ -98,8 +101,16 @@ struct AnimationStateData
 	Uint8 flags = 0;
 
 };
-
 using AnimationMap = unordered_map<String, AnimationStateData>;
+
+struct AnimationMetaData
+{
+	AnimationMap* animMap = nullptr;
+	bool isSegmented = false;
+	SDL_Surface* spriteSheetSurface = nullptr;
+	String spriteSheetName = "";
+	RenderManager* renderManagerInstance;
+};
 
 #pragma endregion
 class Animation
@@ -123,9 +134,12 @@ private:
 	SDL_Surface* mSpriteSheetPtr;
 
 	bool mSegnentedAniamtion;
+
+	RenderManager* mRenderManagerInstance;
+	Logger* mLoggerInstance;
+	SDL_Surface* GetFlippedSegment(AnimationSegmentData* segmentData, SDL_RendererFlip flipFlags);
 public:
-	Animation();
-	void Initialise(String spriteSheetName);
+	Animation(AnimationMetaData data, Logger* logger);
 	void Update(String animState, float deltaTime, float cycleTimerOffset = 0.0f);
 	void Draw(Sint32 x, Sint32 y);
 	bool ValidateState(String animState);

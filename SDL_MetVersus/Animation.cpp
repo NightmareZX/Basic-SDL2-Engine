@@ -1,38 +1,31 @@
 #include "Animation.h"
-#include "AnimationManager.h"
-#include "RenderManager.h"
 #include "GameEngine.h"
 
 //a macro definition for accessing the map from a pointer because it can be a bit confusing to look at
 #define AnimMapPtr(state) (*mAnimationMap)[state]
 
-Animation::Animation()
+Animation::Animation(AnimationMetaData data, Logger* logger)
 {
-	mAnimationMap = nullptr;
-	mSpriteSheetPtr = nullptr;
+	mAnimationMap = data.animMap;
+	mSpriteSheetPtr = data.spriteSheetSurface;
+	mSegnentedAniamtion = data.isSegmented;
 	mCurrentSurface = nullptr;
 	mCurrentTexture = nullptr;
-	mSpriteSheetName = "";
+	mSpriteSheetName = data.spriteSheetName;
 	mLastAnimState = "";
 	mCurrentFrame = 0;
 	mCurrentTextureHeight = 0;
 	mCurrentTextureWidth = 0;
+	mLoggerInstance = logger;
+	mRenderManagerInstance = data.renderManagerInstance;
 
-}
-void Animation::Initialise(String spriteSheetName)
-{
-	AnimationMetaData metaData = AnimationManager::GetInstance()->GetAnimation(spriteSheetName);
-	mAnimationMap = metaData.animMap;
-	mSegnentedAniamtion = metaData.isSegmented;
-	mSpriteSheetPtr = metaData.spriteSheetSurface;
-	mSpriteSheetName = spriteSheetName;
 }
 void Animation::Update(String animState, float deltaTime, float cycleTimerOffset)
 {
 	//Update timers and other things here
 	if (!ValidateState(animState))
 	{
-		Logger::GetInstance()->Log("Animation.cpp: Error: The animation state '" + animState + "' is not registered!");
+		mLoggerInstance->Log("Animation.cpp: Error: The animation state '" + animState + "' is not registered!");
 		return;
 	}
 	AnimationStateData currentAnimState = AnimMapPtr(animState);
@@ -102,7 +95,7 @@ void Animation::Update(String animState, float deltaTime, float cycleTimerOffset
 
 			Uint32 xIndexOffset = 0;
 
-			SDL_Surface* flippedSegment = AnimationManager::GetInstance()->GetFlippedSegment(currentSegment, currentAnimState.flip_flags[i]);
+			SDL_Surface* flippedSegment = GetFlippedSegment(currentSegment, currentAnimState.flip_flags[i]);
 			//If we are dealing with a flipped segment, then we do things sightly differently
 			if (flippedSegment != nullptr)
 			{
@@ -139,7 +132,7 @@ void Animation::Update(String animState, float deltaTime, float cycleTimerOffset
 			RenderManager::BlitSurface(sourceSurface, &src, currentSurface, &dst);
 		}
 		mCurrentSurface = currentSurface;
-		mCurrentTexture = SDL_CreateTextureFromSurface(GameEngine::GetInstance()->GetRenderer(), currentSurface);
+		mCurrentTexture = SDL_CreateTextureFromSurface(mRenderManagerInstance->GetRenderer(), currentSurface);
 		mCurrentTextureWidth = currentSurface->w;
 		mCurrentTextureHeight = currentSurface->h;
 		mCurrentYDrawOffset = currentAnimState.YDrawOffset;
@@ -158,12 +151,25 @@ void Animation::Draw(Sint32 x, Sint32 y)
 {
 	if (mSegnentedAniamtion)
 	{
-		RenderManager::GetInstance()->DrawTexture(mCurrentTexture,
+		mRenderManagerInstance->DrawTexture(mCurrentTexture,
 			x + mCurrentXDrawOffset,
 			y + mCurrentYDrawOffset,
 			mCurrentTextureWidth,
 			mCurrentTextureHeight);
 	}
+}
+SDL_Surface* Animation::GetFlippedSegment(AnimationSegmentData* segmentData, SDL_RendererFlip flipFlags)
+{
+	SDL_Surface* flippedSurface = nullptr;
+	FlippedSegmentList* flippedList = &segmentData->flippedVersions;
+	for (size_t i = 0; i < flippedList->size(); i++)
+	{
+		if ((*flippedList)[i].first == static_cast<Uint32>(flipFlags))
+		{
+			flippedSurface = (*flippedList)[i].second;
+		}
+	}
+	return flippedSurface;
 }
 bool Animation::ValidateState(String animState)
 {

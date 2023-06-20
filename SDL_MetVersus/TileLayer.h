@@ -1,11 +1,13 @@
 #pragma once
 #include "SDL.h"
-#include "STL_Components.h"
+#include "Containers.h"
+#include "String.h"
 #include "Constants.h"
 #include "Layer.h"
 #include "RenderManager.h"
 #include "Vector2D.h"
 #include "Matrix2D.h"
+#include "Camera.h"
 //#include "SimpleMatrix.h"
 
 //===============================================================
@@ -71,10 +73,16 @@ private:
 
 	TileMap mTilemap;
 	String mTileSetName;
+	unordered_map<Uint32, Vector2D>* mTileSourceMap;
 
+	Camera* mCameraInstance;
+	RenderManager* mRenderManagerInstance;
+	const Vector2D GetTileSource(Uint32 tileID);
 public:
-	TileLayer(Uint32 height, Uint32 width, TileMap tilemap,String tileSetName):
-		mHeight(height), mWidth(width), mTilemap(tilemap), mTileSetName(tileSetName){}
+	TileLayer(Uint32 height, Uint32 width, TileMap tilemap,String tileSetName, Camera* camera, RenderManager* rendManager,
+		unordered_map<Uint32, Vector2D>* tileSourceMap):
+		mHeight(height), mWidth(width), mTilemap(tilemap), mTileSetName(tileSetName), mCameraInstance(camera),
+		mRenderManagerInstance(rendManager), mTileSourceMap(tileSourceMap){}
 	virtual void Render();
 	virtual void Update();
 	inline TileMap GetTileMap() { return mTilemap; }

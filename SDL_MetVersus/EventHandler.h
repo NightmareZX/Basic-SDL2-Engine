@@ -1,6 +1,6 @@
 #pragma once
 #include "SDL.h"
-#include "STL_Components.h"
+#include "Containers.h"
 
 enum RegisteredAction
 {
@@ -28,18 +28,18 @@ enum RegisteredAction
 class EventHandler final
 {
 private:
-	EventHandler();
-	static EventHandler* sInstance;
 	const Uint8* mKeyStates;
 	Uint8* mLastKeyStates;
 	map<RegisteredAction, SDL_Scancode> mKeyBindings;
+	bool mQuitStatus;
 public:
-	inline static EventHandler* GetInstance() { if (sInstance == nullptr) sInstance = new EventHandler(); return sInstance; }
+	EventHandler();
 	void ListenForEvents();
 	void KeyPressed();
 	void KeyReleased();
 	void WindowEvent(SDL_Event event);
 	bool GetAction(RegisteredAction action);
 	bool GetActionOnce(RegisteredAction action);
+	inline bool GetQuitStatus() { return mQuitStatus; }
 };
 

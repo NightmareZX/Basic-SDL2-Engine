@@ -2,10 +2,9 @@
 #include "Logger.h"
 #include "IniFile.h"
 
-AudioManager* AudioManager::mInstance = nullptr;
+AudioManager* audioManagerCallback;
 
-
-AudioManager::AudioManager()
+AudioManager::AudioManager(Logger* logger)
 {
 	//Mix_Init(MIX_INIT_MP3);
 	Mix_Init(MIX_INIT_OGG);//use this instead of mp3
@@ -23,6 +22,8 @@ AudioManager::AudioManager()
 	mIsMusicFadingOut = false;
 	mNextMusicID = "";
 	mAudioManagerMutex = SDL_CreateMutex();
+	mLoggerInstance = logger;
+	audioManagerCallback = this;
 }
 
 void AudioManager::RegisterSound(String filename, Mix_MusicType type, String path)
@@ -43,7 +44,7 @@ void AudioManager::RegisterSound(String filename, Mix_MusicType type, String pat
 
 	if (soundfile == nullptr)
 	{
-		Logger::GetInstance()->Log("AudioManager.cpp: Error: Sound file at '" + fileWithPath + "' couldn't load. Reason: " + SDL_GetError());
+		mLoggerInstance->Log("AudioManager.cpp: Error: Sound file at '" + fileWithPath + "' couldn't load. Reason: " + SDL_GetError());
 		return;
 	}
 	
@@ -67,7 +68,7 @@ void AudioManager::RegisterMusic(String filename, Mix_MusicType type, String pat
 
 	if (musicfile == nullptr)
 	{
-		Logger::GetInstance()->Log("AudioManager.cpp: Error: Music file at '" + fileWithPath + "' couldn't load. Reason: " + SDL_GetError());
+		mLoggerInstance->Log("AudioManager.cpp: Error: Music file at '" + fileWithPath + "' couldn't load. Reason: " + SDL_GetError());
 		return;
 	}
 	IniFile musicPropsFile;
@@ -88,12 +89,12 @@ void AudioManager::PlaySoundEffect(String soundID, GameAudioChannels channel, bo
 {
 	if (channel == CHAN_MUSIC)
 	{
-		Logger::GetInstance()->Log("AudioManager.cpp: Warning: Sound file with ID: '" + soundID + "' tried to play in the MUSIC channel! Not playing...");
+		mLoggerInstance->Log("AudioManager.cpp: Warning: Sound file with ID: '" + soundID + "' tried to play in the MUSIC channel! Not playing...");
 		return;
 	}
 	if (!ValidateSound(soundID))
 	{
-		Logger::GetInstance()->Log("AudioManager.cpp: Error: Sound file with ID: '" + soundID + "' isn't registered!");
+		mLoggerInstance->Log("AudioManager.cpp: Error: Sound file with ID: '" + soundID + "' isn't registered!");
 		return;
 	}
 	
@@ -110,7 +111,7 @@ void AudioManager::PlayMusic(String musicID, bool fadeOutCurrent, bool fadeInNex
 {
 	if (!ValidateMusic(musicID))
 	{
-		Logger::GetInstance()->Log("AudioManager.cpp: Error: Music file with ID: '" + musicID + "' isn't registered!");
+		mLoggerInstance->Log("AudioManager.cpp: Error: Music file with ID: '" + musicID + "' isn't registered!");
 		return;
 	}
 	if (mIsMusicFadingOut)
@@ -165,19 +166,19 @@ void AudioManager::PlayMusic(String musicID, bool fadeOutCurrent, bool fadeInNex
 
 void AudioManager::MusicStoppedHandle()
 {
-	SDL_LockMutex(AudioManager::GetInstance()->mAudioManagerMutex);
-	bool* fadeOut = &AudioManager::GetInstance()->mIsMusicFadingOut;
-	bool* fadeIn = &AudioManager::GetInstance()->mFadeInNextMusic;
-	String* nextMusicID = &AudioManager::GetInstance()->mNextMusicID;
-	Uint32* ms_toFadein = &AudioManager::GetInstance()->mFadeInNextMusic_ms;
-	Mix_Music* nextMusic = AudioManager::GetInstance()->mMusicMap[*nextMusicID];
+	SDL_LockMutex(audioManagerCallback->mAudioManagerMutex);
+	bool* fadeOut = &audioManagerCallback->mIsMusicFadingOut;
+	bool* fadeIn = &audioManagerCallback->mFadeInNextMusic;
+	String* nextMusicID = &audioManagerCallback->mNextMusicID;
+	Uint32* ms_toFadein = &audioManagerCallback->mFadeInNextMusic_ms;
+	Mix_Music* nextMusic = audioManagerCallback->mMusicMap[*nextMusicID];
 	Mix_HaltMusic();//just in case
 	Mix_HookMusicFinished(nullptr);
 	if (*fadeOut) *fadeOut = false;
 	
 	if (*fadeIn)
 	{
-		if (AudioManager::GetInstance()->IsMusicIntroduced(*nextMusicID))
+		if (audioManagerCallback->IsMusicIntroduced(*nextMusicID))
 		{
 			Mix_FadeInMusic(nextMusic, 0, static_cast<Sint32>(*ms_toFadein));
 			Mix_HookMusicFinished(&AudioManager::MusicStoppedHandleIntro);
@@ -189,7 +190,7 @@ void AudioManager::MusicStoppedHandle()
 	}
 	else
 	{
-		if (AudioManager::GetInstance()->IsMusicIntroduced(*nextMusicID))
+		if (audioManagerCallback->IsMusicIntroduced(*nextMusicID))
 		{
 			Mix_PlayMusic(nextMusic, 0);
 			Mix_HookMusicFinished(&AudioManager::MusicStoppedHandleIntro);
@@ -197,19 +198,19 @@ void AudioManager::MusicStoppedHandle()
 		else
 			Mix_PlayMusic(nextMusic, -1);
 	}
-	SDL_UnlockMutex(AudioManager::GetInstance()->mAudioManagerMutex);
+	SDL_UnlockMutex(audioManagerCallback->mAudioManagerMutex);
 }
 void AudioManager::MusicStoppedHandleIntro()
 {
-	SDL_LockMutex(AudioManager::GetInstance()->mAudioManagerMutex);
-	MusicIntroMap* introMap = &AudioManager::GetInstance()->mIntroSectionMusicMap;
-	MusicMap* musicMap = &AudioManager::GetInstance()->mMusicMap;
-	String* currMusic = &AudioManager::GetInstance()->mCurrentMusicID;
+	SDL_LockMutex(audioManagerCallback->mAudioManagerMutex);
+	MusicIntroMap* introMap = &audioManagerCallback->mIntroSectionMusicMap;
+	MusicMap* musicMap = &audioManagerCallback->mMusicMap;
+	String* currMusic = &audioManagerCallback->mCurrentMusicID;
 	Mix_HaltMusic();//just in case
 	Mix_HookMusicFinished(&AudioManager::MusicStoppedHandleIntro);
 	Mix_PlayMusic((*musicMap)[*currMusic], 0);
 	Mix_SetMusicPosition((*introMap)[*currMusic]);
-	SDL_UnlockMutex(AudioManager::GetInstance()->mAudioManagerMutex);
+	SDL_UnlockMutex(audioManagerCallback->mAudioManagerMutex);
 }
 
 void AudioManager::Dispose()

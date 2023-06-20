@@ -5,7 +5,7 @@
 void TileLayer::Render()
 {
 	//get the camera bounds so that we know what tiles to render because we shouldnt be rendering tiles if they are outside the camera
-	SDL_Rect cameraViewBox = Camera::GetInstance()->GetViewBox();
+	SDL_Rect cameraViewBox = mCameraInstance->GetViewBox();
 	Uint32 boundsX = cameraViewBox.x / TILE_SIZE;
 	Uint32 boundsY = cameraViewBox.y / TILE_SIZE;
 	Uint32 boundsXW = ((cameraViewBox.w + cameraViewBox.x) / TILE_SIZE) + 1;
@@ -50,15 +50,25 @@ void TileLayer::Render()
 						flipFlags ^= TileInformation::DIAGONAL_FLIP;
 					}
 				}
-				Vector2D textureSrcPos = MapManager::GetInstance()->GetTileSource(mTileSetName, tileID);
+				Vector2D textureSrcPos = GetTileSource(tileID);
 
-				RenderManager::GetInstance()->DrawTile(mTileSetName, 
+				mRenderManagerInstance->DrawTile(mTileSetName,
 					static_cast<Sint32>(column * TILE_SIZE), 
 					static_cast<Sint32>(row * TILE_SIZE),
 					textureSrcPos.X, textureSrcPos.Y, 0, static_cast<SDL_RendererFlip>(flipFlags));
 			}
 		}
 	}
+}
+const Vector2D TileLayer::GetTileSource(Uint32 tileID)
+{
+	auto tileSrcMap = mTileSourceMap->find(tileID);
+	if (tileSrcMap == mTileSourceMap->end())
+	{
+		return Vector2D(0, 0);
+	}
+
+	return tileSrcMap->second;
 }
 void TileLayer::Update()
 {

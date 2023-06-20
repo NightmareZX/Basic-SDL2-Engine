@@ -1,6 +1,7 @@
 #pragma once
 #include "SimpleINI/SimpleIni.h"
-#include "STL_Components.h"
+#include "String.h"
+#include "Containers.h"
 
 using SectionList = std::list<CSimpleIniA::Entry>;
 

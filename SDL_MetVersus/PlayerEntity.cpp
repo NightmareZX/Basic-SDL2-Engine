@@ -5,22 +5,23 @@
 
 constexpr float TURN_AROUND_TIME = 1.0f;
 
-PlayerEntity::PlayerEntity(float x, float y) : BaseEntity(x,y)
+PlayerEntity::PlayerEntity(float x, float y, EventHandler* eventHandler, Animation* anim) : BaseEntity(x,y,"Player",PLAYER)
 {
 	//RenderManager::GetInstance()->RegisterTexture("basic_player.png", "basic_player.png");
 	//mAnimation->SetProperties("basic_player.png", 0, 0, 1);
-	mAnimation->Initialise("basic_player_sheet");
+	mAnimation = anim;
 	SetColliderState(STANDING_CS);
 	mJumpForce = -0.8f;
 	InitialiseAnimStates();
 	InitialiseTimers();
+	mEventHandlerInstance = eventHandler;
 }
 
 void PlayerEntity::Update(float timeDelta)
 {
 	//Basic movement
 	mTurnAroundTimer = (mTurnAroundTimer <= 0.0f) ? 0.0f : mTurnAroundTimer - timeDelta;
-	if (EventHandler::GetInstance()->GetAction(MOVE_RIGHT))
+	if (mEventHandlerInstance->GetAction(MOVE_RIGHT))
 	{
 		if (mFacingDirection != RIGHT_FD && mTurnAroundTimer == 0.0f)
 		{
@@ -33,7 +34,7 @@ void PlayerEntity::Update(float timeDelta)
 		}
 	}
 		
-	else if (EventHandler::GetInstance()->GetAction(MOVE_LEFT))
+	else if (mEventHandlerInstance->GetAction(MOVE_LEFT))
 	{
 		if (mFacingDirection != LEFT_FD && mTurnAroundTimer == 0.0f)
 		{
@@ -51,7 +52,7 @@ void PlayerEntity::Update(float timeDelta)
 
 	//jumping
 	mJumpCooldown = (mJumpCooldown <= 0.0f) ? 0.0f : mJumpCooldown - timeDelta;
-	if (EventHandler::GetInstance()->GetAction(JUMP) && mGrounded && mJumpCooldown == 0.0f)
+	if (mEventHandlerInstance->GetAction(JUMP) && mGrounded && mJumpCooldown == 0.0f)
 	{
 		mJumping = true;
 		mGrounded = false;
@@ -59,7 +60,7 @@ void PlayerEntity::Update(float timeDelta)
 		mJumpCooldown = 0.5f;
 		mJumpForce = -5.0f;
 	}
-	else if (EventHandler::GetInstance()->GetAction(JUMP) && mJumping && mJumpTimer > 0.0f && !mHitCeiling)
+	else if (mEventHandlerInstance->GetAction(JUMP) && mJumping && mJumpTimer > 0.0f && !mHitCeiling)
 	{
 		mJumpTimer -= timeDelta;
 		if (mJumpTimer < 0.0f) mJumpTimer = 0.0f;
@@ -81,10 +82,6 @@ void PlayerEntity::Update(float timeDelta)
 		mJumpTimer = 9.0f;
 		mRigidBody->ResetForceY();
 	}
-
-	CollisionHandler::GetInstance()->HandlePlayerCollision(this, timeDelta);
-
-	HandleAnimState(timeDelta);
 }
 
 void PlayerEntity::Draw()

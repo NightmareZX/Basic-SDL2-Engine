@@ -3,7 +3,6 @@
 
 #define ERROR_NUM 69
 
-CollisionHandler* CollisionHandler::instance = nullptr;
 
 bool CollisionHandler::CheckCollision(SDL_Rect a, SDL_Rect b)
 {
@@ -16,22 +15,20 @@ TileData CollisionHandler::MapCollisionFromPoint(Vector2D point)
 {
 	Vector2D pointOnMap;
 	TileData tileData;
-	Room* currentLevel = GameEngine::GetInstance()->GetCurrentMap();
-	TileMap collisionTileMap = currentLevel->mCollisionTileMap;
 	pointOnMap.X = point.X / TILE_SIZE;
 	pointOnMap.Y = point.Y / TILE_SIZE;
 	tileData.first = pointOnMap;
-	if ((pointOnMap.Y >= collisionTileMap.GetHeight() || pointOnMap.Y < 0) ||
-		(pointOnMap.X >= collisionTileMap.GetWidth() || pointOnMap.X < 0))
+	if ((pointOnMap.Y >= mCollisionTileMap.GetHeight() || pointOnMap.Y < 0) ||
+		(pointOnMap.X >= mCollisionTileMap.GetWidth() || pointOnMap.X < 0))
 	{
 		tileData.second = TileTypes::OUT_OF_BOUNDS;
 		return tileData;
 	}
-	if (pointOnMap.Y >= 0 && pointOnMap.Y < collisionTileMap.GetHeight())
+	if (pointOnMap.Y >= 0 && pointOnMap.Y < mCollisionTileMap.GetHeight())
 	{
-		if (pointOnMap.X >= 0 && pointOnMap.X < collisionTileMap.GetWidth())
+		if (pointOnMap.X >= 0 && pointOnMap.X < mCollisionTileMap.GetWidth())
 		{
-			tileData.second = static_cast<TileTypes>(collisionTileMap[pointOnMap.Y][pointOnMap.X]);
+			tileData.second = static_cast<TileTypes>(mCollisionTileMap[pointOnMap.Y][pointOnMap.X]);
 		}
 	}
 	return tileData;

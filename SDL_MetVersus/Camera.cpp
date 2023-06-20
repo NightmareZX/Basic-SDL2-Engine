@@ -4,11 +4,8 @@
 constexpr Uint16 VIEWBOX_WIDESCREEN_WIDTH = 400;
 constexpr Uint16 VIEWBOX_WIDESCREEN_HEIGHT = 192;
 
-Camera* Camera::mInstance = nullptr;
-
 Camera::Camera()
 {
-	mTargetEntity = nullptr;
 	mViewBox.x = 0;
 	mViewBox.y = 0;
 	mViewBox.w = VIEWBOX_WIDESCREEN_WIDTH;
@@ -20,13 +17,8 @@ Camera::Camera()
 	mBoundPoint.Y = mViewBox.h;
 }
 
-void Camera::Update()
+void Camera::Update(Vector2D entityCentrePoint)
 {
-	if (mTargetEntity == nullptr)
-	{
-		return;
-	}
-	Vector2D entityCentrePoint = mTargetEntity->GetCentrePoint();
 	mViewBox.x = entityCentrePoint.X - (mViewBox.w / 2);
 	mViewBox.y = entityCentrePoint.Y - (mViewBox.h / 2);
 

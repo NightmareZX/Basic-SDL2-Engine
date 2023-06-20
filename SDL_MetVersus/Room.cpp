@@ -1,6 +1,6 @@
 #include "Room.h"
 
-Room::Room(Uint32 playerX, Uint32 playerY)
+Room::Room(Camera* camera, RenderManager* rendManager)
 {
 	mHeight = 0;
 	mWidth = 0;
@@ -9,11 +9,13 @@ Room::Room(Uint32 playerX, Uint32 playerY)
 	mForegroundLayer = nullptr;
 	mMiddlegroundLayer = nullptr;
 
-	RenderManager::GetInstance()->RegisterTexture("collission_tileset.png", "collission_tileset.png");
-	RenderManager::GetInstance()->RegisterTexture("crateria_tileset.png", "crateria_tileset.png");
+	mRendererManagerInstance = rendManager;
+	mCameraInstance = camera;
 
-	mPlayer = new PlayerEntity(playerX, playerY);
-	Camera::GetInstance()->SetTarget(mPlayer);
+	mRendererManagerInstance->RegisterTexture("collission_tileset.png", "collission_tileset.png");
+	mRendererManagerInstance->RegisterTexture("crateria_tileset.png", "crateria_tileset.png");
+
+
 }
 Room::~Room()
 {
@@ -45,29 +47,20 @@ void Room::AddLayer(Layer* layer, ValidLayers type)
 		break;
 	} 
 }
-void Room::DrawMap()
-{
-	//Draw the background layers first
-	if (mBackgroundLayer != nullptr) mBackgroundLayer->Render();
-	if (mMiddlegroundLayer != nullptr) mMiddlegroundLayer->Render();
-	//Objects such as enemies get rendered between middle ground and foreground (usually)
-	mPlayer->Draw();
-	if (mForegroundLayer != nullptr) mForegroundLayer->Render();
-}
+
 void Room::Update(float timeDelta)
 {
-	mPlayer->Update(timeDelta);
-	Camera::GetInstance()->SetCameraBounds(Vector2D(mWidth * 16, mHeight * 16));
-	Camera::GetInstance()->Update();
+	//mPlayer->Update(timeDelta);
+	mCameraInstance->SetCameraBounds(Vector2D(mWidth * 16, mHeight * 16));
 }
 void Room::Dispose()
 {
-	if (mPlayer != nullptr)
-	{
-		mPlayer->Dispose();
-		delete mPlayer;
-		mPlayer = nullptr;
-	}
+	//if (mPlayer != nullptr)
+	//{
+	//	mPlayer->Dispose();
+	//	delete mPlayer;
+	//	mPlayer = nullptr;
+	//}
 	//if (mCollisionLayer != nullptr)
 	//{
 	//	delete mCollisionLayer;

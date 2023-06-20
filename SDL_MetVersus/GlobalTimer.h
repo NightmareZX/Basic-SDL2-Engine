@@ -9,19 +9,16 @@ constexpr float FIXED_TIME_STEP = 1.0f / 60.0f;
 class GlobalTimer
 {
 private:
-	GlobalTimer();
-	static GlobalTimer* sInstance;
 	float mTimeDelta;
-	
 
 	Uint32 mLastTime32;
 	float mLastTimeF;
 	float mAccumulator;
 public:
+	GlobalTimer();
 	void Tick();
 	void TickFixedStep();
 	inline float GetTimeDelta() { return mTimeDelta; }
 	inline float* GetAccumulator() { return &mAccumulator; }
 
-	inline static GlobalTimer* GetInstance() { if (sInstance == nullptr) sInstance = new GlobalTimer(); return sInstance; }
 };

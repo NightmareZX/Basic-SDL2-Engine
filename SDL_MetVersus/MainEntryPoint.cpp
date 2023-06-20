@@ -2,6 +2,7 @@
 
 int main(int argc, char *argv[])
 {
-	GameEngine::GetInstance()->GameLoop();
+	GameEngine game(argc, argv);
+	game.GameLoop();
 	return 0;
 }

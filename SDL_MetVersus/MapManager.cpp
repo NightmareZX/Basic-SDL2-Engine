@@ -11,7 +11,6 @@ using LDIntPoint = const ldtk::IntPoint;
 using LDTileSet = const ldtk::Tileset&;
 using LDIntRect = const ldtk::IntRect;
 
-MapManager* MapManager::sInstance = nullptr;
 
 bool MapManager::LoadMap(String mapname, MapType mapType)
 {
@@ -29,7 +28,21 @@ Room* MapManager::GetMap()
 {
 	return mLoadedMap;
 }
-
+void MapManager::Update(float timeDelta)
+{
+	if (mLoadedMap == nullptr || mObjectManagerInstance == nullptr) return;
+	mLoadedMap->Update(timeDelta);
+	mObjectManagerInstance->Update(timeDelta);
+	mCameraInstance->Update(mObjectManagerInstance->GetMainPlayer()->GetCentrePoint());
+}
+void MapManager::Draw()
+{
+	if (mLoadedMap == nullptr || mObjectManagerInstance == nullptr) return;
+	mLoadedMap->DrawBackground();
+	mLoadedMap->DrawMiddleground();
+	mObjectManagerInstance->Draw();
+	mLoadedMap->DrawForeground();
+}
 void MapManager::Clean()
 {
 	
@@ -48,10 +61,11 @@ bool MapManager::LoadLDTK(String id, String source)
 
 	return true;
 }
-Room* MapManager::DebugLoadLevel(String sourceFile, String levelName)
+void MapManager::DebugLoadLevel(String sourceFile, String levelName)
 {
 	LoadLDTK("", sourceFile);
-	return ConstructRoom(levelName);
+	mLoadedMap = ConstructRoom(levelName);
+	mCollisionHandlerInstance->mCollisionTileMap = mLoadedMap->mCollisionTileMap;
 }
 Room* MapManager::ConstructRoom(String roomName)
 {
@@ -64,7 +78,7 @@ Room* MapManager::ConstructRoom(String roomName)
 
 	if (collision.getType() != ldtk::LayerType::IntGrid)
 	{
-		Logger::GetInstance()->Log("MapManager.Cpp: Error: Collision layer is not an IntGrid!");
+		mLoggerInstance->Log("MapManager.Cpp: Error: Collision layer is not an IntGrid!");
 		return nullptr;
 	}
 
@@ -92,13 +106,14 @@ Room* MapManager::ConstructRoom(String roomName)
 			playerStartPos.Y = entPoint.y;
 		}
 	}
+	mObjectManagerInstance->InitialisePlayer(playerStartPos.X, playerStartPos.Y);
 
-	Room* currentRoom = new Room(playerStartPos.X, playerStartPos.Y);
+	Room* currentRoom = new Room(mCameraInstance, mRendererManagerInstance);
 	currentRoom->mCollisionTileMap = collisionTileMap;
 	currentRoom->mWidth = roomWidth;
 	currentRoom->mHeight = roomHeight;
 	currentRoom->AddLayer(ParseTileLayer("Foreground", room, roomWidth, roomHeight), FOREGROUND);
-	currentRoom->AddLayer(ParseTileLayer("Middleground", room, roomWidth, roomHeight), MIDDLEGROUND);
+	//currentRoom->AddLayer(ParseTileLayer("Middleground", room, roomWidth, roomHeight), MIDDLEGROUND);
 	return currentRoom;
 }
 TileLayer* MapManager::ParseTileLayer(String layerName, LDLevel level, Sint32 width, Sint32 height)
@@ -115,7 +130,7 @@ TileLayer* MapManager::ParseTileLayer(String layerName, LDLevel level, Sint32 wi
 		//realPath = std::filesystem::absolute(realPath);
 		tileset.tileSetPath = tileSet.path;
 		tileset.tileSetPath.erase(0, 3);//TEMP
-		RenderManager::GetInstance()->RegisterTexture(tileSet.name, tileset.tileSetPath);
+		mRendererManagerInstance->RegisterTexture(tileSet.name, tileset.tileSetPath);
 		mLoadedTileSets.emplace(tileSet.name, tileset);
 	}
 	
@@ -139,22 +154,7 @@ TileLayer* MapManager::ParseTileLayer(String layerName, LDLevel level, Sint32 wi
 		tilemap[tilePos.y][tilePos.x] = tileGameID;
 	}
 
-	return new TileLayer(height,width, tilemap, tileSet.name);
-}
-const Vector2D MapManager::GetTileSource(String tileSetName, Uint32 tileID)
-{
-	auto tileSet = mLoadedTileSets.find(tileSetName);
-	if (tileSet == mLoadedTileSets.end())
-	{
-		return Vector2D(0, 0);
-	}
-	auto tileSrcMap = tileSet->second.tileTextureSource.find(tileID);
-	if (tileSrcMap == tileSet->second.tileTextureSource.end())
-	{
-		return Vector2D(0, 0);
-	}
-
-	return tileSrcMap->second;
+	return new TileLayer(height,width, tilemap, tileSet.name, mCameraInstance, mRendererManagerInstance, &tileSrcMap);
 }
 
 //bool MapManager::ParseTMX(String id, String source)

@@ -1,5 +1,5 @@
 #pragma once
-#include "STL_Components.h"
+#include "Containers.h"
 #include "SDL.h"
 #include "TileLayer.h"
 #include "Vector2D.h"
@@ -10,12 +10,12 @@
 //X is the column and Y is the row in the collision layer array 
 using TileData = pair<Vector2D, TileTypes>;
 
+class MapManager;
+
 //This class handles the collision beteen entities and
-class CollisionHandler
+class CollisionHandler final
 {
 private:
-	CollisionHandler(){}
-	static CollisionHandler* instance;
 	String statusCol;
 	Sint32 HandleSlopeCollision(BaseEntity* entity, TileData slopeTile, bool goingRight = false);
 	void WalkDownFloorSlope(BaseEntity* entity);
@@ -23,8 +23,11 @@ private:
 	Sint32 GetSlopeYDifference(TileData slopeTile, Sint32 x, Sint32 y);
 	bool IsTileFloorSlope(TileTypes slopeType);
 	TileTypes ParseTileIntoType(Uint32 tileData);
+
+	TileMap mCollisionTileMap;
+	friend class MapManager;
 public:
-	inline static CollisionHandler* GetInstance() { if (instance == nullptr)instance = new CollisionHandler; return instance; }
+	CollisionHandler() {}
 	bool CheckCollision(SDL_Rect a, SDL_Rect b);
 
 	TileData MapCollisionFromPoint(Vector2D point);

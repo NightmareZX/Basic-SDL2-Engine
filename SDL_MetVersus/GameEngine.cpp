@@ -6,79 +6,50 @@
 #include "AudioManager.h"
 #include "GameRules.h"
 
-GameEngine* GameEngine::mInstance = nullptr;
 
-GameEngine::GameEngine()
-{
-	const String title = "EngineTest";
-	const Uint32 xpos SDL_WINDOWPOS_CENTERED;
-	const Uint32 ypos = SDL_WINDOWPOS_CENTERED;
-	const Uint32 width = 1200;
-	const Uint32 height = 600;
-	bool fullscreen = false;
-	mMainWindow = nullptr;
-	mMainRenderer = nullptr;
-	Uint16 flags = 0; //SDL_WINDOW_MAXIMIZED
-	if (fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
-
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) mRunningStatus = false;
-	else
-	{
-		mMainWindow = SDL_CreateWindow(title.c_str(), xpos, ypos, width, height, flags);
-		if (mMainWindow != nullptr)
-		{
-			mMainRenderer = SDL_CreateRenderer(mMainWindow, -1, 0);
-			mRunningStatus = true;
-		}
-		else mRunningStatus = false;
-	}
-	mFrameAdvanceMode = false;
-
-	mCurrentLevel = nullptr;
-	RenderManager::GetInstance()->SetWindowDimensions(width, height);
-}
 GameEngine::~GameEngine()
 {
 	DisposeComponents();
 }
-void GameEngine::InitialiseComponents()
+void GameEngine::InitialiseComponents(int argc, char* argv[])
 {
+
+	mFrameAdvanceMode = false;
 	TTF_Init();
-	//Initialise singleton instances
-	Logger::GetInstance()->ToggleLogger();
-	GlobalTimer::GetInstance();
-	EventHandler::GetInstance();
-	AudioManager::GetInstance();
-	Camera::GetInstance();
-	AnimationManager::GetInstance();
+	mLogger.ToggleLogger();
+
+	mRunningStatus = !mRendererManager.mFailFlag;
+
 	GameRules::GetInstance();
+	mRendererManager.InitCamera();
 	//Test initialisations
-	RenderManager::GetInstance()->RegisterFont("arial.ttf", "arial.ttf", 24);
-	mCurrentLevel = MapManager::GetInstance()->DebugLoadLevel("TestWordLDtk\\test","Room_0");
+	mRendererManager.RegisterFont("arial.ttf", "arial.ttf", 24);
+	mMapManager.DebugLoadLevel("TestWordLDtk\\test","Room_0");
 	//mCurrentLevel = MapManager::GetInstance()->GetMap();
-	AudioManager::GetInstance()->RegisterMusic("music_test", MUS_OGG);
-	AudioManager::GetInstance()->SetChannelVolume(CHAN_MUSIC, 5);
+	mAudioManager.RegisterMusic("music_test", MUS_OGG);
+	mAudioManager.SetChannelVolume(CHAN_MUSIC, 5);
 }
 
 void GameEngine::GameLoop()
 {
-	InitialiseComponents();
-	//AudioManager::GetInstance()->PlayMusic("music_test", false, true, 0, 5000);
+	//InitialiseComponents();
+	//mAudioManager.PlayMusic("music_test", false, true, 0, 5000);
 	while (mRunningStatus)
 	{
-		GlobalTimer::GetInstance()->TickFixedStep();
-		EventHandler::GetInstance()->ListenForEvents();
+		mGlobalTimer.TickFixedStep();
+		mEventHandler.ListenForEvents();
+		if (mEventHandler.GetQuitStatus()) break;
 
-		if (EventHandler::GetInstance()->GetActionOnce(DEBUG_ENABLE_FRAME_ADVANCE))
+		if (mEventHandler.GetActionOnce(DEBUG_ENABLE_FRAME_ADVANCE))
 		{
 			mFrameAdvanceMode = !mFrameAdvanceMode;
-			float* accumulator = GlobalTimer::GetInstance()->GetAccumulator();
+			float* accumulator = mGlobalTimer.GetAccumulator();
 			*accumulator = 0.0f;
 		}
 			
 		if (mFrameAdvanceMode)
 		{
-			if (EventHandler::GetInstance()->GetActionOnce(DEBUG_ADVANCE_FRAME))
+			if (mEventHandler.GetActionOnce(DEBUG_ADVANCE_FRAME))
 			{
 				EngineUpdate();
 				EngineRender();
@@ -91,7 +62,7 @@ void GameEngine::GameLoop()
 			//==========================================================================
 			//We use fixed time step to update game logic for easier consistency because
 			//variable time step would be too annoying to make work properly
-			float* accumulator = GlobalTimer::GetInstance()->GetAccumulator();
+			float* accumulator = mGlobalTimer.GetAccumulator();
 			while (*accumulator >= FIXED_TIME_STEP)
 			{
 				EngineUpdate();
@@ -108,50 +79,46 @@ void GameEngine::GameLoop()
 
 void GameEngine::EngineUpdate()
 {
-	if (mCurrentLevel != nullptr)
-		mCurrentLevel->Update(1.0f);//using 1.0f delta time since we are in fixed step rn
+	mMapManager.Update(1.0f);//using 1.0f delta time since we are in fixed step rn
 
 	//DEBUG
-	if (EventHandler::GetInstance()->GetAction(DEBUG_LOG_SDL_ERROR))
+	if (mEventHandler.GetAction(DEBUG_LOG_SDL_ERROR))
 	{
-		Logger::GetInstance()->Log("Debug: Current SDL Error: " + String(SDL_GetError()) );
+		mLogger.Log("Debug: Current SDL Error: " + String(SDL_GetError()) );
 	}
-	if (EventHandler::GetInstance()->GetAction(DEBUG_RESTART_MUSIC))
+	if (mEventHandler.GetAction(DEBUG_RESTART_MUSIC))
 	{
-		AudioManager::GetInstance()->PlayMusic("music_test", true, true, 3000, 3000);
+		mAudioManager.PlayMusic("music_test", true, true, 3000, 3000);
 	}
 }
 void GameEngine::EngineRender()
 {
-	//Put stuff to render under the clear but above the present
-	mCurrentLevel->DrawMap();
+	mMapManager.Draw();
 
 	//DEBUG DRAWS
-	//RenderManager::GetInstance()->DrawRectangle(Camera::GetInstance()->GetViewBox());
-	//RenderManager::GetInstance()->DrawRectangle(*Camera::GetInstance()->GetDisplayBox());
-	RenderManager::GetInstance()->DrawText("arial.ttf", 16, 48, mCurrentLevel->GetMainPlayer()->GetPositionStatus());
-	RenderManager::GetInstance()->DrawText("arial.ttf", 16, 68, Camera::GetInstance()->GetPositionStatus());
-	//RenderManager::GetInstance()->DrawText("arial.ttf", 16, 88, CollisionHandler::GetInstance()->GetStatusCol());
-	RenderManager::GetInstance()->DrawRectangleRelativeToCamera(mCurrentLevel->GetMainPlayer()->GetCollider()->GetBox());
+	//mRendererManager.DrawRectangle(Camera::GetInstance()->GetViewBox());
+	//mRendererManager.DrawRectangle(*Camera::GetInstance()->GetDisplayBox());
+	//mRendererManager.DrawText("arial.ttf", 16, 48, mCurrentLevel->GetMainPlayer()->GetPositionStatus());
+	//mRendererManager.DrawText("arial.ttf", 16, 68, Camera::GetInstance()->GetPositionStatus());
+	//mRendererManager.DrawText("arial.ttf", 16, 88, CollisionHandler::GetInstance()->GetStatusCol());
+	//mRendererManager.DrawRectangleRelativeToCamera(mCurrentLevel->GetMainPlayer()->GetCollider()->GetBox());
 
-	SDL_RenderPresent(mMainRenderer);
-	SDL_RenderClear(mMainRenderer);
+	mRendererManager.RendererPresent();
+	mRendererManager.RendererClear();
 }
 void GameEngine::DisposeComponents()
 {
 	//Dispose custom objects
-	if (mCurrentLevel != nullptr) mCurrentLevel->Dispose();
-	RenderManager::GetInstance()->Dispose();
+	//if (mCurrentLevel != nullptr) mCurrentLevel->Dispose();
+	//RenderManager::GetInstance()->Dispose();
 	//GlobalTimer::GetInstance()->Dispose();
 	//EventHandler::GetInstance()->Dispose();
-	AudioManager::GetInstance()->Dispose();
+	//mAudioManager.Dispose();
 	//Camera::GetInstance()->Dispose();
 	//AnimationManager::GetInstance()->Dispose();
 
 	//Destroy sdl objects
 	TTF_Quit();
-	SDL_DestroyWindow(mMainWindow);
-	SDL_DestroyRenderer(mMainRenderer);
 	SDL_Quit();
 }
 

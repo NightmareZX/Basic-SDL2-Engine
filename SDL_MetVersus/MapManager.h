@@ -1,9 +1,10 @@
 #pragma once
-#include "STL_Components.h"
+#include "Containers.h"
 #include "TinyXML/tinyxml.h"
 #include "Room.h"
 #include "Logger.h"
 #include "LDtkLoader/Project.hpp"
+#include "ObjectManager.h"
 
 /// <summary>
 /// This enumerator holds information about a tile in 32 bits, which holds fliping information as well as tile type.
@@ -27,21 +28,22 @@ enum MapType : Uint8
 class MapManager final
 {
 private:
-	static MapManager* sInstance;
+	Logger* mLoggerInstance;
+	RenderManager* mRendererManagerInstance;
+	ObjectManager* mObjectManagerInstance;
 	Room* mLoadedMap;
 	ldtk::Project mCurrentMapProject;
 
 	map<String, TileSetInfo> mLoadedTileSets;
 
+	Camera* mCameraInstance;
+	CollisionHandler* mCollisionHandlerInstance;
 public:
-	MapManager(){ }
-	inline static MapManager* GetInstance()
-	{
-		if (sInstance == nullptr) sInstance = new MapManager();
-		return sInstance;
-	}
+	MapManager(Logger* logger, RenderManager* rendManager, ObjectManager* objManager, CollisionHandler* collHandler, Camera* camera): 
+		mLoadedMap(nullptr), 
+		mLoggerInstance(logger), mObjectManagerInstance(objManager), mRendererManagerInstance(rendManager), mCollisionHandlerInstance(collHandler),
+		mCameraInstance(camera){}
 	bool LoadLDTK(String id, String source);
-	const Vector2D GetTileSource(String tileSetName, Uint32 tileID);
 
 	Room* ConstructRoom(String roomName);
 	TileLayer* ParseTileLayer(String layerName, const ldtk::Level& level, Sint32 width, Sint32 height);
@@ -53,7 +55,10 @@ public:
 
 	Room* GetMap();
 
-	Room* DebugLoadLevel(String sourceFile, String levelName);
+	void Update(float timeDelta);
+	void Draw();
+
+	void DebugLoadLevel(String sourceFile, String levelName);
 	bool LoadMap(String mapname, MapType mapType = LDTK);
 	void Clean();
 	void Dispose();

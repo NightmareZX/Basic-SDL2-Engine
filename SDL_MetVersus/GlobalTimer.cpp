@@ -1,9 +1,6 @@
 #include "GlobalTimer.h"
 #include "Logger.h"
 
-
-GlobalTimer* GlobalTimer::sInstance = nullptr;
-
 //float GlobalTimer::mTimeDelta = 0.0f;
 //Uint32 GlobalTimer::mLastTime32 = 0;
 //float GlobalTimer::mLastTimeF = 0.0f;

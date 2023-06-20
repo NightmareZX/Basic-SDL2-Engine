@@ -1,7 +1,9 @@
 #pragma once
 #include "SDL.h"
 #include "SDL_mixer.h"
-#include "STL_Components.h"
+#include "Containers.h"
+#include "String.h"
+#include "Logger.h"
 
 
 //
@@ -31,7 +33,8 @@ using MusicIntroMap = map<String, double>;
 class AudioManager
 {
 private:
-	static AudioManager* mInstance;
+
+	Logger* mLoggerInstance;
 
 	SoundMap mSoundMap;
 	MusicMap mMusicMap;
@@ -49,7 +52,6 @@ private:
 	String mCurrentMusicID;
 
 	MusicIntroMap mIntroSectionMusicMap;
-	AudioManager();
 	bool ValidateMusic(String id);
 	bool ValidateSound(String id);
 	//Return if the music has an intro section that needs to play only once, but not every other loop after it
@@ -57,8 +59,8 @@ private:
 	void PlayMusicWithIntro();
 	void InitialiseChannels();
 public:
+	AudioManager(Logger* logger);
 	
-	inline static AudioManager* GetInstance() { if (mInstance == nullptr) mInstance = new AudioManager; return mInstance; }
 	void RegisterSound(String filename, Mix_MusicType type, String path = "");
 	void RegisterMusic(String filename, Mix_MusicType type, String path = "");
 	void PlaySoundEffect(String soundID, GameAudioChannels channel, bool interupt = true, Sint32 loopCount = 0);

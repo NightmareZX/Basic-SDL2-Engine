@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationManager.cpp" />
+    <ClCompile Include="BaseProjectile.cpp" />
     <ClCompile Include="GameRules.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BaseEntity.cpp" />
@@ -142,6 +143,8 @@
     <ClCompile Include="GlobalTimer.cpp" />
     <ClCompile Include="EventHandler.cpp" />
     <ClCompile Include="FileHandler.cpp" />
+    <ClCompile Include="ObjectManager.cpp" />
+    <ClCompile Include="MessageManager.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="IniFile.cpp" />
     <ClCompile Include="Layer.cpp" />
@@ -161,6 +164,9 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationManager.h" />
+    <ClInclude Include="BaseProjectile.h" />
+    <ClInclude Include="Containers.h" />
+    <ClInclude Include="FileStream.h" />
     <ClInclude Include="GameRules.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="BaseEntity.h" />
@@ -172,7 +178,10 @@
     <ClInclude Include="GlobalTimer.h" />
     <ClInclude Include="EventHandler.h" />
     <ClInclude Include="FileHandler.h" />
+    <ClInclude Include="IntTypes.h" />
     <ClInclude Include="Matrix2D.h" />
+    <ClInclude Include="ObjectManager.h" />
+    <ClInclude Include="MessageManager.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="IGameObject.h" />
     <ClInclude Include="IniFile.h" />
@@ -184,6 +193,7 @@
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="STL_Components.h" />
     <ClInclude Include="GameEngine.h" />
+    <ClInclude Include="String.h" />
     <ClInclude Include="TileLayer.h" />
     <ClInclude Include="TinyXML\tinystr.h" />
     <ClInclude Include="TinyXML\tinyxml.h" />

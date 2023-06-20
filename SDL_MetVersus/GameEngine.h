@@ -1,5 +1,4 @@
 #pragma once
-#include "STL_Components.h"
 #include "SDL.h"
 #include "Constants.h"
 #include "Room.h"
@@ -8,32 +7,49 @@
 #include "Logger.h"
 #include "EventHandler.h"
 #include "CollisionHandler.h"
+#include "GlobalTimer.h"
+#include "AudioManager.h"
+#include "AnimationManager.h"
+#include "ObjectManager.h"
+#include "MessageManager.h"
+#include "Camera.h"
 
 class GameEngine
 {
 private:
-
-	SDL_Window* mMainWindow;
-	SDL_Renderer* mMainRenderer;
 	
 	bool mRunningStatus;
 	bool mFrameAdvanceMode;
 
-	Room* mCurrentLevel;
-	static GameEngine* mInstance;
+	GlobalTimer mGlobalTimer;
+	Logger mLogger;
+	EventHandler mEventHandler;
+	AudioManager mAudioManager;
+	MapManager mMapManager;
+	RenderManager mRendererManager;
+	AnimationManager mAnimationManager;
+	ObjectManager mObjectManager;
+	CollisionHandler mCollisionHandler;
+	MessageManager mMessageManager;
+	Camera mCamera;
 
 public:
 	~GameEngine();
+	GameEngine(int argc, char* argv[]): mLogger(), mCollisionHandler(), mCamera(), mMessageManager()
+		, mAudioManager(&mLogger), mRendererManager(&mLogger, &mCamera),
+		mAnimationManager(&mRendererManager), mObjectManager(&mLogger, &mCollisionHandler, &mEventHandler, &mAnimationManager),
+		mMapManager(&mLogger, &mRendererManager, &mObjectManager, &mCollisionHandler, &mCamera)
+	{ 
+		InitialiseComponents(argc, argv);
+	}
 	void GameLoop();
 
 	inline void QuitEngine() { mRunningStatus = false; }
-	inline static GameEngine* GetInstance() { if (mInstance == nullptr) mInstance = new GameEngine(); return mInstance; }
-	inline Room* GetCurrentMap() { return mCurrentLevel; }
-	inline SDL_Renderer* GetRenderer() { return mMainRenderer; }
-	inline SDL_Window* GetWindow() { return mMainWindow; }
+	//inline Room* GetCurrentMap() { return mCurrentLevel; }
+	//inline SDL_Renderer* GetRenderer() { return mMainRenderer; }
+	//inline SDL_Window* GetWindow() { return mMainWindow; }
 private:
-	GameEngine();
-	void InitialiseComponents();
+	void InitialiseComponents(int argc, char* argv[]);
 	void EngineUpdate();
 	void EngineRender();
 	void DisposeComponents();
