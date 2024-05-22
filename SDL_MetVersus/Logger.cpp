@@ -4,6 +4,8 @@
 
 using std::cout;
 
+bool Logger::allowConsoleLog = false;
+
 void Logger::ToggleLogger(){ allowConsoleLog = !allowConsoleLog; }
 void Logger::Log(String message)
 {

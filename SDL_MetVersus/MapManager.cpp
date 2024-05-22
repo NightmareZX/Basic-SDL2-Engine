@@ -1,4 +1,5 @@
 #include "MapManager.h"
+#include "Logger.h"
 #include <filesystem>
 
 using LDProject = const ldtk::Project&;
@@ -78,7 +79,7 @@ Room* MapManager::ConstructRoom(String roomName)
 
 	if (collision.getType() != ldtk::LayerType::IntGrid)
 	{
-		mLoggerInstance->Log("MapManager.Cpp: Error: Collision layer is not an IntGrid!");
+		Logger::Log("MapManager.Cpp: Error: Collision layer is not an IntGrid!");
 		return nullptr;
 	}
 

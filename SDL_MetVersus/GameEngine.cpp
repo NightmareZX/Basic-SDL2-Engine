@@ -13,10 +13,9 @@ GameEngine::~GameEngine()
 }
 void GameEngine::InitialiseComponents(int argc, char* argv[])
 {
-
 	mFrameAdvanceMode = false;
 	TTF_Init();
-	mLogger.ToggleLogger();
+	Logger::ToggleLogger();
 
 	mRunningStatus = !mRendererManager.mFailFlag;
 
@@ -84,7 +83,7 @@ void GameEngine::EngineUpdate()
 	//DEBUG
 	if (mEventHandler.GetAction(DEBUG_LOG_SDL_ERROR))
 	{
-		mLogger.Log("Debug: Current SDL Error: " + String(SDL_GetError()) );
+		Logger::Log("Debug: Current SDL Error: " + String(SDL_GetError()) );
 	}
 	if (mEventHandler.GetAction(DEBUG_RESTART_MUSIC))
 	{

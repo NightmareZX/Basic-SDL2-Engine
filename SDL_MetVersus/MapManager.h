@@ -2,7 +2,6 @@
 #include "Containers.h"
 #include "TinyXML/tinyxml.h"
 #include "Room.h"
-#include "Logger.h"
 #include "LDtkLoader/Project.hpp"
 #include "ObjectManager.h"
 
@@ -28,7 +27,6 @@ enum MapType : Uint8
 class MapManager final
 {
 private:
-	Logger* mLoggerInstance;
 	RenderManager* mRendererManagerInstance;
 	ObjectManager* mObjectManagerInstance;
 	Room* mLoadedMap;
@@ -39,9 +37,9 @@ private:
 	Camera* mCameraInstance;
 	CollisionHandler* mCollisionHandlerInstance;
 public:
-	MapManager(Logger* logger, RenderManager* rendManager, ObjectManager* objManager, CollisionHandler* collHandler, Camera* camera): 
+	MapManager( RenderManager* rendManager, ObjectManager* objManager, CollisionHandler* collHandler, Camera* camera): 
 		mLoadedMap(nullptr), 
-		mLoggerInstance(logger), mObjectManagerInstance(objManager), mRendererManagerInstance(rendManager), mCollisionHandlerInstance(collHandler),
+		mObjectManagerInstance(objManager), mRendererManagerInstance(rendManager), mCollisionHandlerInstance(collHandler),
 		mCameraInstance(camera){}
 	bool LoadLDTK(String id, String source);
 

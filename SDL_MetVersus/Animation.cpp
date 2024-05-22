@@ -1,10 +1,11 @@
 #include "Animation.h"
 #include "GameEngine.h"
+#include "Logger.h"
 
 //a macro definition for accessing the map from a pointer because it can be a bit confusing to look at
 #define AnimMapPtr(state) (*mAnimationMap)[state]
 
-Animation::Animation(AnimationMetaData data, Logger* logger)
+Animation::Animation(AnimationMetaData data)
 {
 	mAnimationMap = data.animMap;
 	mSpriteSheetPtr = data.spriteSheetSurface;
@@ -16,7 +17,6 @@ Animation::Animation(AnimationMetaData data, Logger* logger)
 	mCurrentFrame = 0;
 	mCurrentTextureHeight = 0;
 	mCurrentTextureWidth = 0;
-	mLoggerInstance = logger;
 	mRenderManagerInstance = data.renderManagerInstance;
 
 }
@@ -25,7 +25,7 @@ void Animation::Update(String animState, float deltaTime, float cycleTimerOffset
 	//Update timers and other things here
 	if (!ValidateState(animState))
 	{
-		mLoggerInstance->Log("Animation.cpp: Error: The animation state '" + animState + "' is not registered!");
+		Logger::Log("Animation.cpp: Error: The animation state '" + animState + "' is not registered!");
 		return;
 	}
 	AnimationStateData currentAnimState = AnimMapPtr(animState);

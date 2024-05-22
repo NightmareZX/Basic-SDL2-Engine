@@ -4,7 +4,7 @@
 
 AudioManager* audioManagerCallback;
 
-AudioManager::AudioManager(Logger* logger)
+AudioManager::AudioManager()
 {
 	//Mix_Init(MIX_INIT_MP3);
 	Mix_Init(MIX_INIT_OGG);//use this instead of mp3
@@ -22,7 +22,6 @@ AudioManager::AudioManager(Logger* logger)
 	mIsMusicFadingOut = false;
 	mNextMusicID = "";
 	mAudioManagerMutex = SDL_CreateMutex();
-	mLoggerInstance = logger;
 	audioManagerCallback = this;
 }
 
@@ -44,7 +43,7 @@ void AudioManager::RegisterSound(String filename, Mix_MusicType type, String pat
 
 	if (soundfile == nullptr)
 	{
-		mLoggerInstance->Log("AudioManager.cpp: Error: Sound file at '" + fileWithPath + "' couldn't load. Reason: " + SDL_GetError());
+		Logger::Log("AudioManager.cpp: Error: Sound file at '" + fileWithPath + "' couldn't load. Reason: " + SDL_GetError());
 		return;
 	}
 	
@@ -68,7 +67,7 @@ void AudioManager::RegisterMusic(String filename, Mix_MusicType type, String pat
 
 	if (musicfile == nullptr)
 	{
-		mLoggerInstance->Log("AudioManager.cpp: Error: Music file at '" + fileWithPath + "' couldn't load. Reason: " + SDL_GetError());
+		Logger::Log("AudioManager.cpp: Error: Music file at '" + fileWithPath + "' couldn't load. Reason: " + SDL_GetError());
 		return;
 	}
 	IniFile musicPropsFile;
@@ -89,12 +88,12 @@ void AudioManager::PlaySoundEffect(String soundID, GameAudioChannels channel, bo
 {
 	if (channel == CHAN_MUSIC)
 	{
-		mLoggerInstance->Log("AudioManager.cpp: Warning: Sound file with ID: '" + soundID + "' tried to play in the MUSIC channel! Not playing...");
+		Logger::Log("AudioManager.cpp: Warning: Sound file with ID: '" + soundID + "' tried to play in the MUSIC channel! Not playing...");
 		return;
 	}
 	if (!ValidateSound(soundID))
 	{
-		mLoggerInstance->Log("AudioManager.cpp: Error: Sound file with ID: '" + soundID + "' isn't registered!");
+		Logger::Log("AudioManager.cpp: Error: Sound file with ID: '" + soundID + "' isn't registered!");
 		return;
 	}
 	
@@ -111,7 +110,7 @@ void AudioManager::PlayMusic(String musicID, bool fadeOutCurrent, bool fadeInNex
 {
 	if (!ValidateMusic(musicID))
 	{
-		mLoggerInstance->Log("AudioManager.cpp: Error: Music file with ID: '" + musicID + "' isn't registered!");
+		Logger::Log("AudioManager.cpp: Error: Music file with ID: '" + musicID + "' isn't registered!");
 		return;
 	}
 	if (mIsMusicFadingOut)

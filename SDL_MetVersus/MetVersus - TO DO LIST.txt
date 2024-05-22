@@ -1,0 +1,26 @@
+CURRENT PROBLEMS TO SOLVE:
+
+	- Walking down slopes properly
+
+	- Jump mechanics as they are very jank right now
+
+	- Logger is shouldnt be an object, it should just be a class holding static methods
+
+
+FEATURES TO IMPLEMENT:
+
+	- camera mimicing super metroid more (camera goes ahead of player)
+
+	- bitmap text handling (use a still image with look up table to render text on screen bc sdl_ttf can be slow)
+
+	(doing rn) animation system that is very dynamic
+
+
+
+POTENTIAL IDEAS:
+
+
+FUTURE IDEAS:
+
+	- package most of game data in some sort of package to hide stuff
+

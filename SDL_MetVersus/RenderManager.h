@@ -4,7 +4,6 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
-#include "Logger.h"
 #include "Camera.h"
 
 using FontData = pair<SDL_Color, TTF_Font*>;
@@ -19,7 +18,6 @@ private:
 	SDL_Window* mMainWindow;
 	SDL_Renderer* mMainRenderer;
 
-	Logger* mLoggerInstance;
 	Camera* mCameraInstance;
 
 	Uint32 mWindowHeight;
@@ -33,7 +31,7 @@ private:
 	inline void RendererPresent() { SDL_RenderPresent(mMainRenderer); }
 	inline void RendererClear() { SDL_RenderClear(mMainRenderer); }
 public:
-	RenderManager(Logger* logger, Camera* camera);
+	RenderManager(Camera* camera);
 	static void SurfaceFlipHorizontal(SDL_Surface* surface);
 	static void SurfaceFlipVertical(SDL_Surface* surface);
 	static void BlitSurface(SDL_Surface* src, const SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect, SDL_RendererFlip flip = SDL_FLIP_NONE);

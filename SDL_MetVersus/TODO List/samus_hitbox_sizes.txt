@@ -1,0 +1,16 @@
+samus super metroid hitbox sizes in pixels
+
+standing: w10    h42
+
+straight jumping: w10   h38
+
+spin jumping: w10 h24
+
+crouching: w10 h32
+
+morphed (ball): w10 h14
+
+aiming down mid air: w10 h20
+
+
+Speed Booster top speed = 8 pixels per frame

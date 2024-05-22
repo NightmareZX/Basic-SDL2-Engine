@@ -21,6 +21,6 @@ void ObjectManager::InitialisePlayer(Uint32 x, Uint32 y)
 	if (mPlayer != nullptr) delete mPlayer;
 
 	mPlayer = new PlayerEntity(x, y, mEventHandlerInstance, 
-		new Animation(mAnimationManagerInstance->GetAnimation("basic_player_sheet"), mLoggerInstance)
+		new Animation(mAnimationManagerInstance->GetAnimation("basic_player_sheet"))
 	);
 }

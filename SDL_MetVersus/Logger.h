@@ -6,11 +6,11 @@
 class Logger
 {
 private:
-	bool allowConsoleLog;
+	Logger() {}
+	static bool allowConsoleLog;
+	static String GetCurrentStringTime();
 public:
-	Logger():allowConsoleLog(false){}
-	void ToggleLogger();
-	void Log(String message);
-	String GetCurrentStringTime();
+	static void ToggleLogger();
+	static void Log(String message);
 };
 

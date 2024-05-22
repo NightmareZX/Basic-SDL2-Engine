@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationManager.cpp" />
+    <ClCompile Include="BaseGUI.cpp" />
     <ClCompile Include="BaseProjectile.cpp" />
     <ClCompile Include="GameRules.cpp" />
     <ClCompile Include="AudioManager.cpp" />
@@ -164,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationManager.h" />
+    <ClInclude Include="BaseGUI.h" />
     <ClInclude Include="BaseProjectile.h" />
     <ClInclude Include="Containers.h" />
     <ClInclude Include="FileStream.h" />

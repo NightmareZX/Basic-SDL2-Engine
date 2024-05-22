@@ -3,7 +3,6 @@
 #include "SDL_mixer.h"
 #include "Containers.h"
 #include "String.h"
-#include "Logger.h"
 
 
 //
@@ -34,8 +33,6 @@ class AudioManager
 {
 private:
 
-	Logger* mLoggerInstance;
-
 	SoundMap mSoundMap;
 	MusicMap mMusicMap;
 
@@ -59,7 +56,7 @@ private:
 	void PlayMusicWithIntro();
 	void InitialiseChannels();
 public:
-	AudioManager(Logger* logger);
+	AudioManager();
 	
 	void RegisterSound(String filename, Mix_MusicType type, String path = "");
 	void RegisterMusic(String filename, Mix_MusicType type, String path = "");

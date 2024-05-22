@@ -1,0 +1,2 @@
+add:
+ - "Copy of" value for anim states, this will denote that this anim state is just a copy of another anim state

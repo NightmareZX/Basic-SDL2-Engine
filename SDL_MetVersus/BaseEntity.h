@@ -41,10 +41,18 @@ protected:
 
 	friend class ObjectManager;
 public:
+	enum CreationFlags : Uint8
+	{
+		NoCollider = 0x01,
+		NoRigidBody = 0x02,
+	};
 	//Vector2D position;
 	BaseEntity(float x, float y, String className, EntityType type):
 		BaseGameObject(x,y), mRigidBody(new RigidBody), mAnimation(nullptr), mCollider(new Collider),
-		mGrounded(false), mHitCeiling(false), mFacingDirection(LEFT_FD), mClassName(className), mEntityType(type){}
+		mGrounded(false), mHitCeiling(false), mFacingDirection(LEFT_FD), mClassName(className), mEntityType(type)
+	{
+
+	}
 	virtual void Draw() = 0;
 	virtual void Update(float timeDelta) = 0;
 	virtual void Dispose() = 0;

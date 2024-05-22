@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "Vector2D.h"
 
-RenderManager::RenderManager(Logger* logger, Camera* camera)
+RenderManager::RenderManager( Camera* camera)
 {
 	const String title = "EngineTest";
 	const Uint32 xpos SDL_WINDOWPOS_CENTERED;
@@ -30,7 +30,6 @@ RenderManager::RenderManager(Logger* logger, Camera* camera)
 
 	mWindowHeight = height;
 	mWindowWidth = width;
-	mLoggerInstance = logger;
 	mCameraInstance = camera;
 }
 void RenderManager::RegisterTexture(String id, String filename)
@@ -60,7 +59,7 @@ void RenderManager::RegisterFont(String id, String filename, Uint32 size)
 	TTF_Font* font = TTF_OpenFont(filename.c_str(), size);
 	if (font == nullptr)
 	{
-		mLoggerInstance->Log("RenderManager.cpp: TTF Error: couldn't load .ttf file. Reason: " + String(SDL_GetError()) );
+		Logger::Log("RenderManager.cpp: TTF Error: couldn't load .ttf file. Reason: " + String(SDL_GetError()) );
 	}
 	SDL_Color colour = {255,255,255};
 	FontData fData(colour,font);

@@ -22,7 +22,6 @@ private:
 	bool mFrameAdvanceMode;
 
 	GlobalTimer mGlobalTimer;
-	Logger mLogger;
 	EventHandler mEventHandler;
 	AudioManager mAudioManager;
 	MapManager mMapManager;
@@ -35,10 +34,10 @@ private:
 
 public:
 	~GameEngine();
-	GameEngine(int argc, char* argv[]): mLogger(), mCollisionHandler(), mCamera(), mMessageManager()
-		, mAudioManager(&mLogger), mRendererManager(&mLogger, &mCamera),
-		mAnimationManager(&mRendererManager), mObjectManager(&mLogger, &mCollisionHandler, &mEventHandler, &mAnimationManager),
-		mMapManager(&mLogger, &mRendererManager, &mObjectManager, &mCollisionHandler, &mCamera)
+	GameEngine(int argc, char* argv[]): mCollisionHandler(), mCamera(), mMessageManager()
+		, mAudioManager(), mRendererManager(&mCamera),
+		mAnimationManager(&mRendererManager), mObjectManager(&mCollisionHandler, &mEventHandler, &mAnimationManager, &mMessageManager),
+		mMapManager(&mRendererManager, &mObjectManager, &mCollisionHandler, &mCamera)
 	{ 
 		InitialiseComponents(argc, argv);
 	}

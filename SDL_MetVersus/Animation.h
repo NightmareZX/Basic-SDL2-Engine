@@ -3,7 +3,6 @@
 #include "String.h"
 #include "SDL.h"
 #include "RenderManager.h"
-#include "Logger.h"
 
 #pragma region Other_Declerations
 
@@ -136,10 +135,9 @@ private:
 	bool mSegnentedAniamtion;
 
 	RenderManager* mRenderManagerInstance;
-	Logger* mLoggerInstance;
 	SDL_Surface* GetFlippedSegment(AnimationSegmentData* segmentData, SDL_RendererFlip flipFlags);
 public:
-	Animation(AnimationMetaData data, Logger* logger);
+	Animation(AnimationMetaData data);
 	void Update(String animState, float deltaTime, float cycleTimerOffset = 0.0f);
 	void Draw(Sint32 x, Sint32 y);
 	bool ValidateState(String animState);
